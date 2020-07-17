@@ -2,6 +2,7 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
+/*
 const serialport = require('serialport')
 // const tableify = require('tableify')
 
@@ -21,3 +22,4 @@ serialport.list((err, ports) => {
   tableHTML = tableify(ports)
   document.getElementById('ports').innerHTML = tableHTML
 })
+*/
