@@ -70,11 +70,8 @@ app.on('activate', function() {
 
 
 
-// Enable live reload for Electron too
-
-/*
+// Enable live reload for Electron
 require('electron-reload')(__dirname, {
     // Note that the path to electron may vary according to the main file
     electron: require(`${__dirname}/node_modules/electron`)
 });
-*/
