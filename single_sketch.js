@@ -21,48 +21,52 @@
 
 const SerialPort = require('serialport')
 const Readline = require('@serialport/parser-readline')
+const $ = require('jquery');
 
 let port;
 
 
 SerialPort.list((err, ports) => {
-	console.log('ports', ports);
+
+	// console.log('ports', ports);
 	if (err || ports.length === 0) {
-		document.getElementById('results').innerHTML = 'No ports discovered';
+		$('textarea#results').val("No ports discovered")
 	}
 
-	document.getElementById('results').innerHTML = "";
-
-	const sel = document.getElementById('portList');
-
 	ports.forEach(element => {
-		sel.innerHTML += `<option>${element.comName}</option>`
+		$("#portList").append(new Option(element.comName, element.comName));
 	});
-
-	sel.addEventListener('change', function () {
-		const portName =this.options[this.selectedIndex].text;
-
-		port = new SerialPort(portName, {
-			baudRate: 115200
-		})
-		const parser = new Readline()
-		port.pipe(parser)
-
-		parser.on('data', line => {
-			console.log(`> ${line}`);
-			document.getElementById('results').innerHTML = line;
-		})
-	});
-
-	sel.addEventListener('click',function(){
-		if (port === undefined) return;
-		port.close(function (err) {
-			console.log('port closed', err);
-		});
-	});
-
-	
-
-
-
 });
+
+$("#portList").on('change', function () {
+	const portName = $("#portList option:selected").text();
+
+	port = new SerialPort(portName, {
+		baudRate: 115200
+	});
+
+	// read listener
+	const parser = new Readline()
+	port.pipe(parser)
+
+	parser.on('data', line => {
+		console.log(`> ${line}`);
+		$('textarea#results').val(line);
+	})
+});
+
+$("#portList").on('click', function () {
+	if (port === undefined) return;
+	port.close(function (err) {
+		console.log('port closed', err);
+	});
+});
+
+$("#sendButton").on('click', function (){
+	const toSend = `${$('textarea#tosend').val()}\n`
+	port.write(toSend, function(err) {
+		if (err) console.log('Error on write: ', err.message)
+	});
+});
+
+
