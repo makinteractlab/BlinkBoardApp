@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>BlinkBoardApp</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- UIkit CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/css/uikit.min.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <!-- UIkit JS -->
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/js/uikit-icons.min.js"></script>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+  
+</head>
+
+<body style="-webkit-app-region: drag">
+
+  <form class="form-signin">
+    <fieldset class="uk-fieldset">
+
+      <legend class="uk-legend">JSON console</legend>
+
+      <div class="uk-margin">
+        <select id="portList" class="uk-select">
+            <option disabled selected value> -- select an option -- </option>
+        </select>
+    </div>
+
+      <div class="uk-margin">
+        <textarea id="tosend" class="uk-textarea console" rows="5" placeholder="Input JSON"></textarea>
+        <textarea id="results" class="uk-textarea console disable" rows="5" placeholder="Result JSON"></textarea>
+      </div>
+
+      <p uk-margin>
+        <button type="button" id="sendButton" class="uk-button uk-button-primary">Send</button>
+      </p>
+
+    </fieldset>
+  </form>
+
+  <script src="../js/console.js"></script>
+
+</body>
+
+</html>

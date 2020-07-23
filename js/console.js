@@ -19,6 +19,7 @@
 // 	ellipse(width/2, height/2, 100, 100);
 // }
 
+
 const SerialPort = require('serialport')
 const Readline = require('@serialport/parser-readline')
 const $ = require('jquery');
@@ -70,3 +71,13 @@ $("#sendButton").on('click', function (){
 });
 
 
+
+
+
+
+$("#quitbutton").on('click', function()
+{
+	const {BrowserWindow} = require('electron').remote;
+	let theWindow = BrowserWindow.getFocusedWindow();
+	theWindow.close();
+});

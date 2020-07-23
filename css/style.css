@@ -1,61 +1,10 @@
-/* Form */
-/* .form-container{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #cccccc;
-}
-.form-box{
-  width: 50%;
-  height: auto;
-  display: block;
-  position: absolute;
-  margin: auto;
-  border-radius: 10px;
-  top: 50%;
-  left: 0;
-  right: 0;
-  background-color: white;
-  padding: 24px;
 
-  -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
-  -moz-box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
-  box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
-
-  -webkit-transform: translateY(-50%);
-  transform: 	translateY(-50%);
-}
-.form-title{
-  width: 100%;
-  text-align: center;
-  color: #212121;
-  font-size: 24px;
-  font-weight: 200;
-  margin-bottom: 24px;
-}
-
-
-
-.fileName
-{
-  color: rgba(0,0,0,0.5);
-  font-weight: bold;
-  text-align: center;  
-}
-
-.error-footer
-{
-  margin-top: 10%;
-}
-
-/* Signing in */
 
 html,
 body {
   height: 100%;
 }
+
 
 body {
   display: -ms-flexbox;
@@ -77,7 +26,7 @@ body {
   margin: 0 auto;
 }
 
-.console {
+/* .console {
   display: block;
   width: 100%;
   max-width: 500px;
@@ -85,12 +34,12 @@ body {
   resize: none;
   min-height: 40px;
   line-height: 20px;
-}
+} */
 
-.disable
+/* .disable
 {
   pointer-events: none;
-}
+} */
 
 /*
 .form-signin .checkbox {
