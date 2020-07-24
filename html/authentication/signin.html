@@ -14,7 +14,7 @@
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/js/uikit-icons.min.js"></script>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../../css/style.css" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" />
 
   <!-- JS -->
@@ -30,6 +30,9 @@
   <!-- Add Firebase products that you want to use -->
   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
+
+  <!-- BlinkBoard -->
+  <script src="auth.js"></script>
 
 </head>
 
@@ -88,11 +91,12 @@
 
 
 
-  <script src="../js/auth.js"></script>
+  
 
   <script>
     $(document).ready(function () {
       $('#signinButton').on('click', () => toggleSignIn($('#email').val(), $('#password').val()));
+      $('#signinGoogleButton').on('click', googleSignIn);
     });
   </script>
 
