@@ -9,21 +9,9 @@ const url = require('url')
 
 
 
-var firebaseConfig = {
-    apiKey: "AIzaSyB3gZSdRbQZBcQFWfJYE8_giL-jr2TCcXY",
-    authDomain: "blinkboard-c8374.firebaseapp.com",
-    databaseURL: "https://blinkboard-c8374.firebaseio.com",
-    projectId: "blinkboard-c8374",
-    storageBucket: "blinkboard-c8374.appspot.com",
-    messagingSenderId: "587052739775",
-    appId: "1:587052739775:web:881bc0fe047818679bea0a"
-};
-
-
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow;
 
 
 function createWindow() {
@@ -43,7 +31,7 @@ function createWindow() {
 
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'html/index.html'),
+        pathname: path.join(__dirname, 'public/index.html'),
         protocol: 'file:',
         slashes: true
     }))
@@ -85,7 +73,7 @@ app.on('activate', function() {
 // code. You can also put them in separate files and require them here.
 
 
-
+// Debug
 // Enable live reload for Electron
 require('electron-reload')(__dirname, {
     // Note that the path to electron may vary according to the main file

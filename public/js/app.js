@@ -13,20 +13,18 @@ var firebaseConfig = {
 
 
 function initApp() {
-    
+
     firebase.auth().onAuthStateChanged(function (user) {
         // we are not signed in
         if (!user) {
             console.log("no user");
-            window.location.href = "../html/authentication/signin.html";
+            window.location.href = "signin.html";
         }
     });
 }
 
 
-function signOut()
-{
-    console.log("out")
+function signOut() {
     if (firebase.auth().currentUser) {
         firebase.auth().signOut();
     }
@@ -37,4 +35,4 @@ function signOut()
 $(document).ready(function () {
     firebase.initializeApp(firebaseConfig);
     initApp();
-  });
+});
