@@ -31,6 +31,9 @@
   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
 
+  <!-- BlinkBoard -->
+  <script src="../js/auth.js"></script>
+  
 </head>
 
 <body style="-webkit-app-region: drag">
@@ -38,11 +41,13 @@
 
   <form class="uk-form-stacked">
 
+    <h2><span class="uk-text-background"></span>Create an account</h2>
+
     <div class="uk-margin">
       <label class="uk-form-label" for="form-stacked-text">Email</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: user"></span>
-        <input id="signupEmail" class="uk-input uk-form-width-large" type="text">
+        <input id="email" class="uk-input uk-form-width-large" type="text">
       </div>
     </div>
 
@@ -50,7 +55,7 @@
       <label class="uk-form-label" for="form-stacked-text">Password</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: lock"></span>
-        <input id="signupPassword" class="uk-input uk-form-width-large" type="password">
+        <input id="password1" class="uk-input uk-form-width-large" type="password">
       </div>
     </div>
 
@@ -58,22 +63,44 @@
       <label class="uk-form-label" for="form-stacked-text">Password Confirmation</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: lock"></span>
-        <input id="signupPasswordConfirmed" class="uk-input uk-form-width-large" type="password">
+        <input id="password2" class="uk-input uk-form-width-large" type="password">
       </div>
     </div>
 
 
-    <div class="uk-margin">
-      <input id="signupButton" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom" disabled="true" type="button" value="Sign Up" />
+    <div class="uk-margin uk-grid">
+      <input id="signupButton" class="uk-button uk-button-primary uk-width-1-2" disabled="true" type="button"
+        value="Sign Up" />
+      <input id="cancel" class="uk-button uk-button-default uk-width-1-2" type="button" value="Cancel" />
     </div>
 
-    
   </form>
 
 
+  <!-- Modal for alert message -->
+  <div id="modalAlert" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <h2 id="title" class="uk-modal-title">Alert</h2>
+      <p id="message"></p>
+      <p class="uk-text-right">
+        <button class="uk-button uk-button-default uk-modal-close" type="button">Ok</button>
+      </p>
+    </div>
+  </div>
 
-  <script src="../js/auth.js"></script>
 
+
+
+  <script>
+    $(document).ready(function () {
+      $("#signupButton").on('click', () => handleSignUp($('#email').val(), $('#password1').val()));
+      $("#cancel").on('click', () => window.location.href = 'signin.html');
+      $('#email').on('change keyup paste', checkSignUpInfo);
+      $('#password1').on('change keyup paste', checkSignUpInfo);
+      $('#password2').on('change keyup paste', checkSignUpInfo);
+    });
+  </script>
 
 
 </body>

@@ -1,4 +1,6 @@
 const $ = require('jquery');
+const path = require('path');
+global.appRoot = path.resolve(__dirname);
 
 
 var firebaseConfig = {
@@ -12,195 +14,128 @@ var firebaseConfig = {
 };
 
 
-/**
- * Handles the sign in button press.
- */
 
 
+function modalAlertMessage(title, msg) {
+    $("#title").text(title);
+    $("#message").text(msg);
+    UIkit.modal('#modalAlert').show();
+}
+
+function validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
 
-function toggleSignIn() {
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    if (email.length < 4) {
-        alert('Please enter an email address.');
-        return;
+function checkSignUpInfo() {
+    const email = $('#email').val();
+    const p1 = $('#password1').val();
+    const p2 = $('#password2').val();
+
+    if (email == "" ||
+        !validateEmail(email) ||
+        p1 == "" ||
+        p1.length < 6 ||
+        p1 != p2) {
+        $('#signupButton')[0].disabled = true;
+    } else {
+        $('#signupButton')[0].disabled = false;
     }
-    if (password.length < 4) {
-        alert('Please enter a password.');
-        return;
-    }
-    // Sign in with email and pass.
-    // [START authwithemail]
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    // .then(function(result){
-    //     // console.log(firebase.auth().currentUser.email)
-    //     // $('#test').fadeOut(300);
-    // })
-    .catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // [START_EXCLUDE]
-        if (errorCode === 'auth/wrong-password') {
-            alert('Wrong password.');
-        } else {
-            alert(errorMessage);
-        }
-        console.log(error);
-        // [END_EXCLUDE]
-    });
-    // [END authwithemail]
+}
+
+
+function toggleSignIn(email, password) {
     
-}
-
-/**
- * Handles the sign up button press.
- */
-function handleSignUp() {
-    let email = $("#signupEmail").val();
-    let password = $("#signupPassword").val();
-
-    if (email.length < 4) {
-        alert('Please enter an email address.');
+    if (email == "" || email.length < 4) {
+        modalAlertMessage('There was a problem', 'Please enter a valid email address.');
         return;
     }
-    if (password.length < 4) {
-        alert('Please enter a password.');
+    if (password == "" || password.length < 6) {
+        modalAlertMessage('There was a problem', 'Please enter a password.');
         return;
     }
-    // Create user with email and pass.
-    // [START createwithemail]
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // [START_EXCLUDE]
-        if (errorCode == 'auth/weak-password') {
-            alert('The password is too weak.');
-        } else {
-            alert(errorMessage);
-        }
-        console.log(error);
-        // [END_EXCLUDE]
-    });
-    // [END createwithemail]
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(function(result){
+            window.location.href = "home.html"
+        })
+        .catch(function (error) {
+
+            var errorCode = error.code;
+            var errorMessage = error.message;
+
+            if (errorCode === 'auth/wrong-password') {
+                modalAlertMessage('There was a problem', 'Wrong password.');
+            } else {
+                modalAlertMessage('There was a problem', errorMessage);
+            }
+            modalAlertMessage('There was a problem', error);
+        });
 }
 
 
-/*
-function sendPasswordReset() {
-    var email = document.getElementById('email').value;
-    // [START sendpasswordemail]
-    firebase.auth().sendPasswordResetEmail(email).then(function () {
-        // Password Reset Email Sent!
-        // [START_EXCLUDE]
-        alert('Password Reset Email Sent!');
-        // [END_EXCLUDE]
-    }).catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // [START_EXCLUDE]
-        if (errorCode == 'auth/invalid-email') {
-            alert(errorMessage);
-        } else if (errorCode == 'auth/user-not-found') {
-            alert(errorMessage);
-        }
-        console.log(error);
-        // [END_EXCLUDE]
-    });
-    // [END sendpasswordemail];
-}
-*/
-/**
- * initApp handles setting up UI event listeners and registering Firebase auth listeners:
- *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
- *    out, and that is where we update the UI.
- */
-function initApp() {
-    // Listening for auth state changes.
-    // [START authstatelistener]
-    firebase.auth().onAuthStateChanged(function (user) {
-        // [START_EXCLUDE silent]
-        // document.getElementById('quickstart-verify-email').disabled = true;
-        // [END_EXCLUDE]
-        if (user) {
-            // User is signed in.
-            var displayName = user.displayName;
-            var email = user.email;
-            var emailVerified = user.emailVerified;
-            var photoURL = user.photoURL;
-            var isAnonymous = user.isAnonymous;
-            var uid = user.uid;
-            var providerData = user.providerData;
+function handleSignUp(email, password) {
 
-            user.updateProfile({ // <-- Update Method here
+    if (email == "" || email.length < 4) {
+        modalAlertMessage('There was a problem', 'Please enter an email address.');
+        return;
+    }
+    if (password == "" || password.length < 6) {
+        modalAlertMessage('There was a problem', 'Please enter a password of at least 6 characters.');
+        return;
+    }
 
-                displayName: "TestName",
-                photoURL: "https://example.com/jane-q-user/profile.jpg"
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(function (result) {
+            modalAlertMessage('Account created', 'Go back to signing and login');
+            $('#modalAlert button').on('click', () => window.location.href = "signin.html");
+        })
+        .catch(function (error) {
 
-            }).then(function () {
+            var errorCode = error.code;
+            var errorMessage = error.message;
 
-                // Profile updated successfully!
-                //  "NEW USER NAME"
-
-                var displayName = user.displayName;
-                // "https://example.com/jane-q-user/profile.jpg"
-                var photoURL = user.photoURL;
-
-
-                window.location.href="console.html"
-                
-
-            }, function (error) {
-                // An error happened.
-            });
-
-
-            // [START_EXCLUDE]
-            console.log(JSON.stringify(user, null, '  '));
-            // [END_EXCLUDE]
-        } else {
-            console.log("no user");
-        }
-        // [START_EXCLUDE silent]
-        // [END_EXCLUDE]
-    });
-    // [END authstatelistener]
+            if (errorCode == 'auth/weak-password') {
+                modalAlertMessage('There was a problem', 'The password is too weak.');
+            } else {
+                modalAlertMessage('There was a problem', errorMessage);
+            }
+            modalAlertMessage('There was a problem', error);
+        });
 }
 
 
-function checkSignUpInfo(){
-    if (($('#signupEmail').val() == "") ||
-       ($('#signupPassword').val() == "") ||
-       ($('#signupPassword').val() != $('#signupPasswordConfirmed').val())) {
-        $('#signupButton')[0].disabled= true;
-       }else{
-        $('#signupButton')[0].disabled= false;
-       }
+
+function sendPasswordReset(email) {
+    if (email == "" || email.length < 4) {
+        modalAlertMessage('There was a problem', 'Please enter an email address.');
+        return;
+    }
+
+    firebase.auth().sendPasswordResetEmail(email)
+        .then(function () {
+            modalAlertMessage('Password Reset Email Sent!', 'Check your email');
+
+        }).catch(function (error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+
+            console.log(errorMessage)
+            if (errorCode == 'auth/invalid-email') {
+                modalAlertMessage('There was a problem', errorMessage);
+            } else if (errorCode == 'auth/user-not-found') {
+                modalAlertMessage('There was a problem', errorMessage);
+            }
+            modalAlertMessage('There was a problem', error);
+        });
 }
+
+
+
 
 
 $(document).ready(function () {
     firebase.initializeApp(firebaseConfig);
-    
-    if (firebase.auth().currentUser) {
-        // [START signout]
-        firebase.auth().signOut();
-        // [END signout]
-    }
-
-    // initApp();
-    
-
-    $("#signinButton").on('click', toggleSignIn);
-    $("#signupButton").on('click', handleSignUp);
-
-    $('#signupEmail').on('change keyup paste', checkSignUpInfo);
-    $('#signupPassword').on('change keyup paste', checkSignUpInfo);
-    $('#signupPasswordConfirmed').on('change keyup paste', checkSignUpInfo);
-
-    
-   
 });
