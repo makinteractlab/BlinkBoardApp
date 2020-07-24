@@ -32,13 +32,13 @@
 
   <!-- BlinkBoard -->
   <script src="js/auth.js"></script>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/style.css" />
 
 </head>
 
 <body style="-webkit-app-region: drag">
 
-  
+
 
   <form id="test" class="uk-form-stacked">
 
@@ -62,43 +62,44 @@
 
 
     <div class="uk-margin">
-      <input id="signinButton" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom" type="button" value="Sign In" />
+      <input id="signinButton" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom" type="button"
+        value="Sign In" />
     </div>
 
     <div class="uk-grid-match uk-child-width-1-2@m" uk-grid>
       <div>
-        <button type="button"  onclick="window.location.href='signup.html';" class="uk-align-right uk-button uk-button-text">Create New Account</button>
+        <button type="button" onclick="window.location.href='signup.html';"
+          class="uk-align-right uk-button uk-button-text">Create New Account</button>
       </div>
       <div>
-        <button type="button"  onclick="window.location.href='forgotPassword.html';" class="uk-align-right uk-button uk-button-text">Forgot Password?</button>
+        <button type="button" onclick="window.location.href='forgotPassword.html';"
+          class="uk-align-right uk-button uk-button-text">Forgot Password?</button>
       </div>
     </div>
 
   </form>
 
- <!-- Modal for alert message -->
- <div id="modalAlert" uk-modal>
-  <div class="uk-modal-dialog uk-modal-body">
-    <button class="uk-modal-close-default" type="button" uk-close></button>
-    <h2 id="title" class="uk-modal-title">Alert</h2>
-    <p id="message"></p>
-    <p class="uk-text-right">
-      <button class="uk-button uk-button-default uk-modal-close" type="button">Ok</button>
-    </p>
+  <!-- Modal for alert message -->
+  <div id="modalAlert" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <h2 id="title" class="uk-modal-title">Alert</h2>
+      <p id="message"></p>
+      <p class="uk-text-right">
+        <button class="uk-button uk-button-default uk-modal-close" type="button">Ok</button>
+      </p>
+    </div>
   </div>
-</div>
 
 
 
 
-  
+
 
   <script>
     $(document).ready(function () {
       $('#signinButton').on('click', () => toggleSignIn($('#email').val(), $('#password').val()));
     });
-
-    
   </script>
 
 

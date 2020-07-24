@@ -32,41 +32,32 @@
 
   <!-- BlinkBoard -->
   <script src="js/app.js"></script>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css"/>
 
 
 </head>
 
 <body style="-webkit-app-region: drag">
 
-  <nav class="uk-navbar uk-navbar-container uk-margin">
-    <div class="uk-navbar-left">
-      <a class="uk-navbar-toggle" href="#">
-        <span uk-toggle="target: #offcanvas-nav" uk-navbar-toggle-icon></span> <span
-          class="uk-margin-small-left"></span>
+  <nav class="uk-navbar uk-margin uk-position-top-left">
+      <a class="uk-navbar-toggle" href="#" >
+        <span id="arrowIcon" uk-icon="arrow-right" uk-toggle="target: #menu" ></span>
       </a>
-    </div>
   </nav>
 
   </div>
 
 
   <!-- Sidebar -->
-  <div id="offcanvas-nav" uk-offcanvas="overlay: true">
+  <div id="menu" uk-offcanvas="overlay: true; mode: push" >
     <div class="uk-offcanvas-bar">
 
-      <ul class="uk-nav uk-nav-default">
-        <li class="uk-active"><a href="#">Active</a></li>
-        <li class="uk-parent">
-          <a href="#">Parent</a>
-          <ul class="uk-nav-sub">
-            <li><a href="#">Sub item</a></li>
-            <li><a href="#">Sub item</a></li>
-          </ul>
-        </li>
-        <li class="uk-nav-header">Header</li>
-        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: table"></span> Item</a></li>
-        <li><a href="#"><span class="uk-margin-small-right" uk-icon="icon: thumbnails"></span> Item</a></li>
+      <ul class="uk-nav uk-nav-primary">
+        <li class="uk-active"><h2>BlinkBoard</h2></li>
+        <li class="uk-active uk-margin"><p id="userEmail">email@email.com</p></li>
+        
+        <li><a id="settings" href="#"><span class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a>
+        <li><a id="settings" href="#"><span class="uk-margin-small-right" uk-icon="icon: settings"></span>Settings</a>
         <li class="uk-nav-divider"></li>
         <li><a id="signout" href="#"><span class="uk-margin-small-right" uk-icon="icon:  sign-out"></span>Sign out</a>
         </li>
@@ -77,11 +68,27 @@
 
 
 
+
   <script>
-    $('#signout').on('click', signOut);
+    $(document).ready(function () {
+      $('#signout').on('click', signOut);
+
+      UIkit.util.on('#menu', 'show', function () {
+          // $('#arrowIcon')
+          console.log("show")
+      });
+
+      UIkit.util.on('#menu', 'toggle', function () {
+        console.log($('#arrowIcon').attr('uk-icon'));
+        $('#arrowIcon').rotate(180, {
+        duration: 2000,
+        easing: 'swing'});
+      });
+    
+    });
   </script>
 
-
+<a href="console.html">sadfasdf</a>
 </body>
 
 </html>

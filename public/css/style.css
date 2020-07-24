@@ -26,6 +26,10 @@ body {
   margin: 0 auto;
 }
 
+.uk-offcanvas-bar {
+  background: #1F7EEE;
+}
+
 /* .console {
   display: block;
   width: 100%;
