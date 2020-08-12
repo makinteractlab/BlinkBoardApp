@@ -73,7 +73,7 @@ app.on('activate', function() {
 // code. You can also put them in separate files and require them here.
 
 
-// Debug
+// Debug (uncomment at deplyment)
 // Enable live reload for Electron
 require('electron-reload')(__dirname, {
     // Note that the path to electron may vary according to the main file

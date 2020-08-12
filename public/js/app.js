@@ -26,3 +26,14 @@ $(document).ready(function () {
     firebase.initializeApp(common.firebaseConfig);
     initApp();
 });
+
+
+
+
+// Open external links in browser
+const shell = require('electron').shell;
+
+$(document).on('click', 'a[href^="http"]', function(event) {
+  event.preventDefault();
+  shell.openExternal(this.href);
+});
