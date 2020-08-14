@@ -2,10 +2,6 @@ const $ = require('jquery');
 var common = require('./js/common');
 
 
-
-
-
-
 function checkSignUpInfo() {
     const email = $('#email').val();
     const p1 = $('#password1').val();

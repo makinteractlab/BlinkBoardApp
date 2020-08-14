@@ -18,6 +18,7 @@
 
   <!-- JS -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="css/style.css"/>
 
   <!-- P5.js --> 
   <script src="lib/p5.js"></script>
@@ -35,33 +36,28 @@
   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.16.1/firebase-firestore.js"></script>
 
-  <!-- BlinkBoard -->
-  <script src="js/app.js"></script>
-  <link rel="stylesheet" href="css/style.css"/>
-
-
 </head>
 
 
 
 <body style="-webkit-app-region: drag">
 
-  <nav class="uk-navbar uk-position-top-left">
-      <a class="uk-navbar-toggle" href="#" >
-        <span uk-icon="arrow-right" uk-toggle="target: #menu" ></span>
-      </a>
-  </nav>
-
+  <!-- Connection status -->
   <nav class="uk-navbar uk-position-top-right">
-    <span class="uk-label uk-label-success uk-hidden">Ready</span>
-    <span class="uk-label uk-label-danger">Disconnected</span>
+    <span id="statusReady" class="uk-label uk-label-success">Ready</span>
+    <span id="statusExpired" class="uk-label uk-label-danger">Expired</span>
+    <span id="statusDisconnected" class="uk-label uk-label-warning">Disconnected</span>
   </nav>
 
- 
-
-
+  <!-- Navigation arrow -->
+  <nav class="uk-navbar uk-position-top-left">
+    <a class="uk-navbar-toggle" href="#" >
+      <span uk-icon="arrow-right" uk-toggle="target: #sideBar" ></span>
+    </a>
+  </nav>
+  
   <!-- Sidebar -->
-  <div id="menu" uk-offcanvas="overlay: true; mode: push;" >
+  <div id="sideBar" uk-offcanvas="overlay: true; mode: push;" >
     <div class="uk-offcanvas-bar uk-background-primary">
 
         <ul class="uk-nav-primary uk-nav-parent-icon" uk-nav>
@@ -72,110 +68,70 @@
             
             <li class="uk-nav-divider"></li>
 
-            <li><a id="home" href="#"><span class="uk-margin-small-right" uk-icon="icon: home"></span>Home</a></li>
-            <li><a id="settings" href="#"><span class="uk-margin-small-right" uk-icon="icon: user"></span>Account</a></li>
-            <li><a id="console" href="console.html"><span class="uk-margin-small-right" uk-icon="icon: server"></span>Console</a></li>
-
+            <li><a id="homeLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: home"></span>Home</a></li>
+            <li><a id="accountLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: user"></span>Account</a></li>
+            <li><a id="consoleLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: server"></span>Console</a></li>
 
             <li class="uk-parent">
                 <a href="#"><span class="uk-margin-small-right" uk-icon="icon: settings"></span>Controls</a>
                 <ul class="uk-nav-sub">
-                    <li><span>Brightness</span><input class="uk-range" type="range"></input></li>
+                    <li>
+                      <span>Brightness</span>
+                      <input class="uk-range" type="range"></input>
+                    </li>
                     <li class="uk-margin-small">
-                       <span>USB port</span>
-                        <select id="portList" class="uk-select">
-                        <option disabled selected value> -- Select the USB connection -- </option>
-                        </select>
+                      <span>USB port</span>
+                      <select id="portList" class="uk-select">
+                      <option disabled selected value> -- Select the USB connection -- </option>
+                      </select>
                   </li>
                 </ul>
             </li>
 
             <li class="uk-nav-divider"></li>
-            <li><a id="documentation" href="https://makinteract.gitbook.io/blinkboard/"><span class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
-            <li><a id="signout" href="#"><span class="uk-margin-small-right" uk-icon="icon:  sign-out"></span>Sign out</a></li>
+
+            <li><a id="documentationLink" href="https://makinteract.gitbook.io/blinkboard/"><span class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
+            <li><a id="signoutLink" href="#"><span class="uk-margin-small-right" uk-icon="icon:  sign-out"></span>Sign out</a></li>
 
         </ul>
-    
-      <!-- <ul class="uk-nav uk-nav-primary uk-nav-parent-icon">
-        
-        
-        <li class="uk-active uk-margin"><p id="userEmail">email@email.com</p></li>
-
-        
-        
-        
-
-          <li class="uk-nav-divider"></li>
-          <li><a id="documentation" href="https://makinteract.gitbook.io/blinkboard/"><span class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
-          <li><a id="settings" href="#"><span class="uk-margin-small-right" uk-icon="icon: settings"></span>Settings</a></li>
-          <li><a id="console" href="console.html"><span class="uk-margin-small-right" uk-icon="icon: server"></span>Console</a></li>
-          
-          
-          
-          <li class="uk-nav-divider"></li>
-          <li><a id="signout" href="#"><span class="uk-margin-small-right" uk-icon="icon:  sign-out"></span>Sign out</a></li>
-        
-
-
-          <div class="uk-margin-top">
-            <li><span>Brightness</span><input class="uk-range" type="range">asdf</input></li>
-  
-            <select id="portList" class="uk-select">
-                <option disabled selected value> -- Select the USB connection -- </option>
-            </select>
-          </div>
-
-
-      </ul> -->
-
     </div>
   </div>
 
+  <!-- homeScreen -->
+  <div id="homeScreen">
 
-
-
- 
-
-
-
-  <script>
-    $(document).ready(function () {
-      $('#signout').on('click', signOut);
-
-      UIkit.util.on('#menu', 'show', function () {
-          // $('#arrowIcon')
-          console.log("show")
-      });
-
-      UIkit.util.on('#menu', 'toggle', function () {
-        console.log($('#arrowIcon').attr('uk-icon'));
-        $('#arrowIcon').rotate(180, {
-        duration: 2000,
-        easing: 'swing'});
-      });
+    <div id="mainSketch"></div>
     
-    });
+    <form class="uk-light uk-background-primary uk-form-horizontal">
+      <input id="statusBar" class="uk-input uk-light uk-background-primary uk-form-small" type="text" placeholder="Connect BlinkBoard" disabled>
+    </form>
+    
+  </div>
+
+
+  <!-- consoleScreen -->
+  <form id="consoleScreen" class="form-signin">
+    <fieldset class="uk-fieldset">
+
+      <legend class="uk-legend">JSON console</legend>
+
+      <div class="uk-margin">
+        <textarea id="tosendText" class="uk-textarea console" rows="5" placeholder="Input JSON"></textarea>
+        <textarea id="resultsText" class="uk-textarea console disable" rows="5" placeholder="Result JSON"></textarea>
+      </div>
+
+      <p uk-margin>
+        <button type="button" id="sendButton" class="uk-button uk-button-primary">Send</button>
+      </p>
+
+    </fieldset>
+  </form>
 
 
 
-  </script>
-
-
-<div id="mainBody">
-
-<div id="mainSketch"></div>
-
-
-
-  <form class="uk-light uk-background-primary uk-form-horizontal">
-    <input class="uk-input uk-light uk-background-primary uk-form-small" type="text" placeholder="Connect BlinkBoard" disabled>
- </form>
-
-</div>
-
-
+  <!-- JS -->
+  <script src="js/app.js"></script>
   <script src="js/breadboard.js"></script>
-
 
 </body>
 
