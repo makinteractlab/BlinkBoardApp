@@ -66,9 +66,7 @@ $("#portList").on('click', function () {
 // UI
 
 function initUI() {
-    $('#homeLink').on('click', showHomeScreen);
     $('#accountLink').on('click', undefined);
-    $('#consoleLink').on('click', showConsoleScreen);
     $('#signout').on('click', signOut);
 
     $('#brightnessRange').on('input change', function(){
@@ -76,21 +74,28 @@ function initUI() {
         writeJsonToPort({"cmd": "setBrightness", "value": this.value});
     });
 
-    // Input stats bar
-    $('#statusBarInput').hide();
-    $('#statusBarInputButton').hide();
+    // Status bar
+    $('#statusBar').hide();
 
-    $('#inputConsoleCheck').on ('click', function(){
-        
-        if (this.checked)
-        {
-            $('#statusBarInput').show();
-            $('#statusBarInputButton').show();
-        }else{
-            $('#statusBarInput').hide();
-            $('#statusBarInputButton').hide();
-        }
+    $('#showStatusbarCheck').on ('click', function(){
+        if (this.checked) $('#statusBar').slideDown();
+        else $('#statusBar').slideUp();
     });
+
+    $('#statusBarSend').on('click', function(){
+        if (!ready) return;
+        const toSend = `${$('#statusBarInput').val()}\n`;
+        port.write(toSend, function(err) {
+            if (err) console.log('Error on write: ', err.message)
+        });
+    });
+
+
+    
+	
+    
+
+
 
     // Open links to extetrnal browser
     $(document).on('click', 'a[href^="http"]', function (event) {
@@ -102,15 +107,6 @@ function initUI() {
     setConnectionStatus ('disconnected');
 }
 
-function showHomeScreen() {
-    $('#homeScreen').show();
-    $('#consoleScreen').hide();
-}
-
-function showConsoleScreen() {
-    $('#homeScreen').hide();
-    $('#consoleScreen').show();
-}
 
 
 
@@ -160,7 +156,7 @@ function onSerialEvent (msg)
         statusMessage = JSON.stringify(msg);
     }
 
-    $('#statusBar').val (statusMessage);
+    $('#statusBarOutput').val (statusMessage);
 }
 
 

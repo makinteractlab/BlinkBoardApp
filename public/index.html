@@ -69,12 +69,7 @@
         </li>
 
         <li class="uk-nav-divider"></li>
-
-        <!-- <li><a id="homeLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: home"></span>Breadboard</a> -->
-        </li>
         <li><a id="accountLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: user"></span>Account</a>
-        </li>
-        <!-- <li><a id="consoleLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: server"></span>Console</a></li> -->
 
         <li class="uk-parent">
           <a href="#"><span class="uk-margin-small-right" uk-icon="icon: settings"></span>Controls</a>
@@ -88,23 +83,16 @@
               <select id="portList" class="uk-select">
                 <option disabled selected value> -- Select the USB connection -- </option>
               </select>
-              <label><input id="inputConsoleCheck" class="uk-checkbox" type="checkbox"> Input console</label>
+              <label><input id="showStatusbarCheck" class="uk-checkbox" type="checkbox">Show statusbar</label>
             </li>
-
-            <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-            </div>
-
-
           </ul>
         </li>
 
         <li class="uk-nav-divider"></li>
 
-        <li><a id="documentationLink" href="https://makinteract.gitbook.io/blinkboard/"><span
-              class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
-        <li><a id="signoutLink" href="#"><span class="uk-margin-small-right" uk-icon="icon:  sign-out"></span>Sign
-            out</a></li>
-
+        <li><a id="documentationLink" href="https://makinteract.gitbook.io/blinkboard/">
+          <span class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
+        <li><a id="signoutLink" href="#"><span class="uk-margin-small-right" uk-icon="icon:  sign-out"></span>Sign out</a></li>
       </ul>
     </div>
   </div>
@@ -114,44 +102,31 @@
 
     <div id="mainSketch"></div>
 
-    <form class="uk-light uk-background-primary uk-grid-collapse" uk-grid>
+    <!-- Status bar -->
+    <nav class="uk-navbar uk-position-bottom">
+      <form id="statusBar" class="uk-light uk-background-primary uk-grid-collapse" uk-grid>
 
-      <div class="uk-width-expand">
-        <input id="statusBar" class="uk-input uk-light uk-background-primary uk-form-small" type="text"
-          placeholder="Connect BlinkBoard" disabled>
-      </div>
+        <!-- Output -->
+        <div class="uk-width-expand">
+          <input id="statusBarOutput" class="uk-input uk-light uk-background-primary uk-form-small" type="text"
+            placeholder="Connect BlinkBoard" disabled>
+        </div>
 
-      <div id="statusBarInput" class="uk-width-expand">
-        <input class="uk-input uk-light uk-background-primary uk-form-small" type="text" placeholder="">
-      </div>
+        <!-- Input -->
+        <div class="uk-width-expand">
+          <input id="statusBarInput" class="uk-input uk-light uk-background-primary uk-form-small" type="text"
+            placeholder="">
+        </div>
 
-      <div id="statusBarInputButton" class="uk-width-auto">
-        <button class="uk-button uk-light uk-button-primary uk-button-small">Send</button>
-      </div>
+        <div class="uk-width-auto">
+          <button id="statusBarSend" class="uk-button uk-light uk-button-primary uk-button-small">Send</button>
+        </div>
 
+      </form>
 
-    </form>
+    </nav>
 
   </div>
-
-
-  <!-- consoleScreen -->
-  <form id="consoleScreen" class="form-signin">
-    <fieldset class="uk-fieldset">
-
-      <legend class="uk-legend">JSON console</legend>
-
-      <div class="uk-margin">
-        <textarea id="tosendText" class="uk-textarea console" rows="5" placeholder="Input JSON"></textarea>
-        <textarea id="resultsText" class="uk-textarea console disable" rows="5" placeholder="Result JSON"></textarea>
-      </div>
-
-      <p uk-margin>
-        <button type="button" id="sendButton" class="uk-button uk-button-primary">Send</button>
-      </p>
-
-    </fieldset>
-  </form>
 
 
 
