@@ -9,7 +9,7 @@ const EXP_YEAR = 20;
 
 
 let port;
-let connected= false;
+let ready= false;
 
 
 
@@ -71,12 +71,34 @@ function initUI() {
     $('#consoleLink').on('click', showConsoleScreen);
     $('#signout').on('click', signOut);
 
+    $('#brightnessRange').on('input change', function(){
+        if (!ready) return;
+        writeJsonToPort({"cmd": "setBrightness", "value": this.value});
+    });
+
+    // Input stats bar
+    $('#statusBarInput').hide();
+    $('#statusBarInputButton').hide();
+
+    $('#inputConsoleCheck').on ('click', function(){
+        
+        if (this.checked)
+        {
+            $('#statusBarInput').show();
+            $('#statusBarInputButton').show();
+        }else{
+            $('#statusBarInput').hide();
+            $('#statusBarInputButton').hide();
+        }
+    });
+
     // Open links to extetrnal browser
     $(document).on('click', 'a[href^="http"]', function (event) {
         event.preventDefault();
         shell.openExternal(this.href);
     });
 
+    // Set connection
     setConnectionStatus ('disconnected');
 }
 
@@ -106,36 +128,37 @@ function setupSerialPort(portName) {
         onSerialEvent (JSON.parse(line));
     })
 
-    // Need to wait few seconds for Arduino to connect
-    setTimeout( () => writeJsonToPort ({cmd:"status"}), 2000);
-    setTimeout( initSequence, 4500);
+    // Need to wait few seconds (e.g. 3) for Arduino to connect
+    setTimeout( initSequence, 3000);
 }
 
 function initSequence()
 {
     const d= new Date();
-    const init= {"cmd": "initialize", "month": d.getMonth(), "year": d.getFullYear()%100};
+    const init= {"cmd": "initialize", "month": d.getMonth()+1, "year": d.getFullYear()%100};
     // activation is used only once and it is hardcoded
     const activation = {cmd: "activate", month: EXP_MONTH, year: EXP_YEAR};
-    writeJsonToPort(activation)
-    writeJsonToPort(init)
-    writeJsonToPort({cmd: "reset"})
+    writeJsonToPort({cmd: "status"}); // sent to avoid parse fail
+    writeJsonToPort(activation); // set for ID220 fall 2020
+    writeJsonToPort(init);
+    writeJsonToPort({cmd: "reset"});
 }
 
 
+let statusMessage ="...";
 
 function onSerialEvent (msg)
 {
-    let statusMessage ="";
-
     if (msg.status == "ready") {
         setConnectionStatus ("ready");
-        statusMessage = "ready";
+        statusMessage = "Ready";
    
     } else if (msg.status == "expired"){
         setConnectionStatus ("expired");
         statusMessage = "Trial period expired";
-    } 
+    } else{
+        statusMessage = JSON.stringify(msg);
+    }
 
     $('#statusBar').val (statusMessage);
 }
@@ -156,19 +179,19 @@ function writeJsonToPort (msg)
 function setConnectionStatus(status) {
     switch (status) {
         case 'ready':
-            connected= true;
+            ready= true;
             $('#statusReady').show();
             $('#statusDisconnected').hide();
             $('#statusExpired').hide();
             break;
         case 'disconnected':
-            connected= false;
+            ready= false;
             $('#statusReady').hide();
             $('#statusDisconnected').show();
             $('#statusExpired').hide();
             break;
         case 'expired':
-            connected= false;
+            ready= false;
             $('#statusReady').hide();
             $('#statusDisconnected').hide();
             $('#statusExpired').show();

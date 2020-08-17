@@ -18,9 +18,9 @@
 
   <!-- JS -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/style.css" />
 
-  <!-- P5.js --> 
+  <!-- P5.js -->
   <script src="lib/p5.js"></script>
   <script src="lib/p5.dom.min.js"></script>
   <script src="lib/p5.sound.min.js"></script>
@@ -51,49 +51,61 @@
 
   <!-- Navigation arrow -->
   <nav class="uk-navbar uk-position-top-left">
-    <a class="uk-navbar-toggle" href="#" >
-      <span uk-icon="arrow-right" uk-toggle="target: #sideBar" ></span>
+    <a class="uk-navbar-toggle" href="#">
+      <span uk-icon="arrow-right" uk-toggle="target: #sideBar"></span>
     </a>
   </nav>
-  
+
   <!-- Sidebar -->
-  <div id="sideBar" uk-offcanvas="overlay: true; mode: push;" >
+  <div id="sideBar" uk-offcanvas="overlay: true; mode: push;">
     <div class="uk-offcanvas-bar uk-background-primary">
 
-        <ul class="uk-nav-primary uk-nav-parent-icon" uk-nav>
-            <li class="uk-active">
-              <img id="logo" src="images/logo.png"/>
+      <ul class="uk-nav-primary uk-nav-parent-icon" uk-nav>
+        <li class="uk-active">
+          <img id="logo" src="images/logo.png" />
+        </li>
+        <li class="uk-active uk-margin">
+          <p id="userEmail">email@email.com</p>
+        </li>
+
+        <li class="uk-nav-divider"></li>
+
+        <!-- <li><a id="homeLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: home"></span>Breadboard</a> -->
+        </li>
+        <li><a id="accountLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: user"></span>Account</a>
+        </li>
+        <!-- <li><a id="consoleLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: server"></span>Console</a></li> -->
+
+        <li class="uk-parent">
+          <a href="#"><span class="uk-margin-small-right" uk-icon="icon: settings"></span>Controls</a>
+          <ul class="uk-nav-sub">
+            <li>
+              <span>Brightness</span>
+              <input id="brightnessRange" class="uk-range" type="range" value="20" min="1" max="99"></input>
             </li>
-            <li class="uk-active uk-margin"><p id="userEmail">email@email.com</p></li>
-            
-            <li class="uk-nav-divider"></li>
-
-            <li><a id="homeLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: home"></span>Home</a></li>
-            <li><a id="accountLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: user"></span>Account</a></li>
-            <li><a id="consoleLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: server"></span>Console</a></li>
-
-            <li class="uk-parent">
-                <a href="#"><span class="uk-margin-small-right" uk-icon="icon: settings"></span>Controls</a>
-                <ul class="uk-nav-sub">
-                    <li>
-                      <span>Brightness</span>
-                      <input class="uk-range" type="range"></input>
-                    </li>
-                    <li class="uk-margin-small">
-                      <span>USB port</span>
-                      <select id="portList" class="uk-select">
-                      <option disabled selected value> -- Select the USB connection -- </option>
-                      </select>
-                  </li>
-                </ul>
+            <li class="uk-margin-small">
+              <span>USB port</span>
+              <select id="portList" class="uk-select">
+                <option disabled selected value> -- Select the USB connection -- </option>
+              </select>
+              <label><input id="inputConsoleCheck" class="uk-checkbox" type="checkbox"> Input console</label>
             </li>
 
-            <li class="uk-nav-divider"></li>
+            <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+            </div>
 
-            <li><a id="documentationLink" href="https://makinteract.gitbook.io/blinkboard/"><span class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
-            <li><a id="signoutLink" href="#"><span class="uk-margin-small-right" uk-icon="icon:  sign-out"></span>Sign out</a></li>
 
-        </ul>
+          </ul>
+        </li>
+
+        <li class="uk-nav-divider"></li>
+
+        <li><a id="documentationLink" href="https://makinteract.gitbook.io/blinkboard/"><span
+              class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
+        <li><a id="signoutLink" href="#"><span class="uk-margin-small-right" uk-icon="icon:  sign-out"></span>Sign
+            out</a></li>
+
+      </ul>
     </div>
   </div>
 
@@ -101,11 +113,25 @@
   <div id="homeScreen">
 
     <div id="mainSketch"></div>
-    
-    <form class="uk-light uk-background-primary uk-form-horizontal">
-      <input id="statusBar" class="uk-input uk-light uk-background-primary uk-form-small" type="text" placeholder="Connect BlinkBoard" disabled>
+
+    <form class="uk-light uk-background-primary uk-grid-collapse" uk-grid>
+
+      <div class="uk-width-expand">
+        <input id="statusBar" class="uk-input uk-light uk-background-primary uk-form-small" type="text"
+          placeholder="Connect BlinkBoard" disabled>
+      </div>
+
+      <div id="statusBarInput" class="uk-width-expand">
+        <input class="uk-input uk-light uk-background-primary uk-form-small" type="text" placeholder="">
+      </div>
+
+      <div id="statusBarInputButton" class="uk-width-auto">
+        <button class="uk-button uk-light uk-button-primary uk-button-small">Send</button>
+      </div>
+
+
     </form>
-    
+
   </div>
 
 
