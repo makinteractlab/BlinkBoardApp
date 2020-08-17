@@ -3,6 +3,12 @@ const shell = require('electron').shell;
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
 const common = require('./js/common');
+const { lstat } = require('fs');
+const { timeStamp } = require('console');
+
+var firebase = require('firebase/app');
+require('firebase/auth');
+require('firebase/database');
 
 const EXP_MONTH = 12;
 const EXP_YEAR = 20;
@@ -12,11 +18,19 @@ let port;
 let ready= false;
 
 
+const userData = {}
+
+
 
 $(document).ready(function () {
     firebase.initializeApp(common.firebaseConfig);
     initApp();
     initUI();
+
+    // var database = firebase.database();
+    // firebase.database().ref('users/' + 123).set({
+    //     username: "asdf"
+    //   });
 });
 
 
@@ -30,8 +44,19 @@ function initApp() {
             window.location.href = "signin.html";
         }
         $('#userEmail').text(user.email);
+        userData.id = user.uid;
+        userData.email = user.email;
+        updateUserData();
+
+        // If serial port was defined, attempt to connect
+        firebase.database().ref('/users/' + userData.id).once('value').then(function(snapshot) {
+            const portName = snapshot.val().port;
+            if (portName!= undefined) setupSerialPort(portName);
+        });
 
     });
+
+    
 }
 
 
@@ -39,6 +64,12 @@ function signOut() {
     if (firebase.auth().currentUser) {
         firebase.auth().signOut();
     }
+}
+
+
+function updateUserData()
+{
+    firebase.database().ref('users/' + userData.id).update(userData);
 }
 
 
@@ -67,7 +98,7 @@ $("#portList").on('click', function () {
 
 function initUI() {
     $('#accountLink').on('click', undefined);
-    $('#signout').on('click', signOut);
+    $('#signoutLink').on('click', signOut);
 
     $('#brightnessRange').on('input change', function(){
         if (!ready) return;
@@ -89,14 +120,7 @@ function initUI() {
             if (err) console.log('Error on write: ', err.message)
         });
     });
-
-
     
-	
-    
-
-
-
     // Open links to extetrnal browser
     $(document).on('click', 'a[href^="http"]', function (event) {
         event.preventDefault();
@@ -126,6 +150,10 @@ function setupSerialPort(portName) {
 
     // Need to wait few seconds (e.g. 3) for Arduino to connect
     setTimeout( initSequence, 3000);
+
+    // Save on db
+    userData.port = portName;
+    updateUserData();
 }
 
 function initSequence()
