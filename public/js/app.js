@@ -24,6 +24,7 @@ const userData = {}
 
 $(document).ready(function () {
     firebase.initializeApp(common.firebaseConfig);
+
     initApp();
     initUI();
 
@@ -43,6 +44,7 @@ function initApp() {
             console.log("no user");
             window.location.href = "signin.html";
         }
+
         $('#userEmail').text(user.email);
         userData.id = user.uid;
         userData.email = user.email;

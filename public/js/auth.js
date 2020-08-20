@@ -20,19 +20,38 @@ function checkSignUpInfo() {
 
 
 function toggleSignIn(email, password) {
-    
+
     if (email == "" || email.length < 4) {
         modalAlertMessage('There was a problem', 'Please enter a valid email address.');
         return;
     }
     if (password == "" || password.length < 6) {
-        modalAlertMessage('There was a problem', 'Please enter a password.');
+        modalAlertMessage('There was a problem', 'Please enter a valid password.');
         return;
     }
 
     firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(function(result){
-            window.location.href = "index.html";
+        .then(function (result) {
+
+            // Attempt to sign in
+            firebase.auth().onAuthStateChanged(function (user) {
+                // we are not signed in
+                if (!user) {
+                    console.log("no user");
+                    window.location.href = "signin.html";
+                }
+
+                if (!user.emailVerified) {
+                    user.sendEmailVerification().then(function () {
+                        modalAlertMessage('Verification required', 'Please check your email and verify your account.');
+                    });
+                    return;
+                }
+
+                // go to the app
+                window.location.href = "index.html";
+            });
+
         })
         .catch(function (error) {
 
@@ -96,7 +115,7 @@ function sendPasswordReset(email) {
             var errorCode = error.code;
             var errorMessage = error.message;
 
-        
+
             if (errorCode == 'auth/invalid-email') {
                 modalAlertMessage('There was a problem', errorMessage);
             } else if (errorCode == 'auth/user-not-found') {
