@@ -42,13 +42,14 @@ function initApp() {
         // we are not signed in
         if (!user) {
             console.log("no user");
-            window.location.href = "signin.html";
+            window.location.href = "authentication.html";
         }
 
         $('#userEmail').text(user.email);
         userData.id = user.uid;
         userData.email = user.email;
         updateUserData();
+
 
         // If serial port was defined, attempt to connect
         firebase.database().ref('/users/' + userData.id).once('value').then(function(snapshot) {

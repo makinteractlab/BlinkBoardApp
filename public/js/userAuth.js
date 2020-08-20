@@ -1,6 +1,18 @@
 const $ = require('jquery');
 var common = require('./js/common');
 
+var firebase = require('firebase/app');
+require('firebase/auth');
+require('firebase/database');
+
+
+
+function showForm (id) {
+    $('form').not('#' + id).hide();
+    $('#' + id).show();
+}
+
+
 
 function checkSignUpInfo() {
     const email = $('#email').val();
