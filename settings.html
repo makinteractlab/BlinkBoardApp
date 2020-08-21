@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>BlinkBoardApp</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- UIkit CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/css/uikit.min.css" />
+
+  <!-- UIkit JS -->
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/js/uikit-icons.min.js"></script>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+</head>
+
+<body style="-webkit-app-region: drag">
+
+  <form class="uk-form-stacked uk-width-1-2">
+
+    <h2><span class="uk-text-background"></span>Settings</h2>
+
+    <div class="uk-margin">
+      <label class="uk-form-label" for="form-stacked-text">Email</label>
+      <div class="uk-inline">
+        <span class="uk-form-icon" uk-icon="icon: user"></span>
+        <input id="signUpEmail" class="uk-input uk-form-width-large" type="text">
+      </div>
+    </div>
+
+    <div class="uk-margin">
+      <label class="uk-form-label" for="form-stacked-text">Password</label>
+      <div class="uk-inline">
+        <span class="uk-form-icon" uk-icon="icon: lock"></span>
+        <input id="signUpPassword1" class="uk-input uk-form-width-large" type="password">
+      </div>
+    </div>
+
+    <div class="uk-margin">
+      <label class="uk-form-label" for="form-stacked-text">Password Confirmation</label>
+      <div class="uk-inline">
+        <span class="uk-form-icon" uk-icon="icon: lock"></span>
+        <input id="signUpPassword2" class="uk-input uk-form-width-large" type="password">
+      </div>
+    </div>
+
+    <div class="uk-margin">
+      <p class="uk-text-muted">By clicking <span class="uk-text-emphasis">Create Account</span>, you agree to participate in the beta testing program of BlinkBoard. Your data will be encrypted, anonymized, stored with <a href="https://firebase.google.com">Google Firebase</a> and <span class="uk-text-danger"> eventually used for future research and course development</span>.</p>
+    </div>
+
+    <div class="uk-margin" uk-grid>
+      <div class="uk-width-1-2@s">
+        <input id="signUpButton" class="uk-button uk-button-primary uk-width-1-1" disabled="true" type="button"
+          value="Create account" />
+      </div>
+      <div class="uk-width-1-2@s">
+        <input type="button" onclick="showForm('signInForm')" class="uk-button uk-button-default uk-width-1-1" type="button" value="Cancel" />
+      </div>
+    </div>
+
+  </form>
+
+
+  <!-- Modal for alert message -->
+  <div id="modalAlert" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <h2 id="title" class="uk-modal-title">Alert</h2>
+      <p id="message"></p>
+      <p class="uk-text-right">
+        <button class="uk-button uk-button-default uk-modal-close" type="button">Ok</button>
+      </p>
+    </div>
+  </div>
+
+
+
+
+
+  <script src="assets/js/settings.js"></script>
+
+  
+  </script>
+
+</body>
+
+</html>

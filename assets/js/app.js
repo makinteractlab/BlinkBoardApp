@@ -2,13 +2,11 @@ const $ = require('jquery');
 const shell = require('electron').shell;
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const common = require('./js/common');
+const common = require('./assets/js/common');
 const { lstat } = require('fs');
 const { timeStamp } = require('console');
 
-var firebase = require('firebase/app');
-require('firebase/auth');
-require('firebase/database');
+const firebase = common.getFirebase();
 
 const EXP_MONTH = 12;
 const EXP_YEAR = 20;
@@ -23,11 +21,9 @@ const userData = {}
 
 
 $(document).ready(function () {
-    firebase.initializeApp(common.firebaseConfig);
-
+    
     initApp();
     initUI();
-
     // var database = firebase.database();
     // firebase.database().ref('users/' + 123).set({
     //     username: "asdf"
@@ -37,12 +33,16 @@ $(document).ready(function () {
 
 
 function initApp() {
+
+    // init Firebase
+
     // state check
     firebase.auth().onAuthStateChanged(function (user) {
         // we are not signed in
         if (!user) {
             console.log("no user");
             window.location.href = "authentication.html";
+            return;
         }
 
         $('#userEmail').text(user.email);

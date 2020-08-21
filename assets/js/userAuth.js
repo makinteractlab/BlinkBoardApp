@@ -1,21 +1,13 @@
 const $ = require('jquery');
-var common = require('./js/common');
-
-var firebase = require('firebase/app');
-require('firebase/auth');
-require('firebase/database');
-
-
+const common = require('./assets/js/common');
+const firebase = common.getFirebase();
 
 
 $(document).ready(function () {
-    firebase.initializeApp(common.firebaseConfig);
 
     // Attempt to sign in
     firebase.auth().onAuthStateChanged(function (user) {
 
-        console.log ("sdfsdaf");
-        console.log (user);
         if (user == null) return;
 
         if (!user.emailVerified) {
