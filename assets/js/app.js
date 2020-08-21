@@ -44,7 +44,7 @@ function initApp() {
             window.location.href = "authentication.html";
             return;
         }
-
+/*
         $('#userEmail').text(user.email);
         userData.id = user.uid;
         userData.email = user.email;
@@ -56,7 +56,7 @@ function initApp() {
             const portName = snapshot.val().port;
             if (portName!= undefined) setupSerialPort(portName);
         });
-
+*/
     });
 
     
