@@ -12,7 +12,7 @@ const url = require('url')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-
+const DEBUG = true; // set false at export final application
 
 function createWindow() {
     // Create the browser window.
@@ -23,7 +23,8 @@ function createWindow() {
         height: 700,
         webPreferences: {
             nodeIntegration: true,
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
+            devTools: DEBUG
         },
         frame: false,
         resizable: false
@@ -38,7 +39,7 @@ function createWindow() {
 
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    DEBUG && mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function() {
@@ -46,7 +47,7 @@ function createWindow() {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null
-    })
+    });
 }
 
 // This method will be called when Electron has finished
@@ -73,9 +74,11 @@ app.on('activate', function() {
 // code. You can also put them in separate files and require them here.
 
 
-// Debug (uncomment at deplyment)
+// Debug 
 // Enable live reload for Electron
-require('electron-reload')(__dirname, {
+DEBUG && require('electron-reload')(__dirname, {
     // Note that the path to electron may vary according to the main file
     electron: require(`${__dirname}/node_modules/electron`)
 });
+
+

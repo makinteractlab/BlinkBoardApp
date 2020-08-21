@@ -7,31 +7,43 @@ require('firebase/database');
 
 
 
-function showForm (id) {
+
+$(document).ready(function () {
+    firebase.initializeApp(common.firebaseConfig);
+
+    // Attempt to sign in
+    firebase.auth().onAuthStateChanged(function (user) {
+
+        console.log ("sdfsdaf");
+        console.log (user);
+        if (user == null) return;
+
+        if (!user.emailVerified) {
+            modalAlertMessage('Verification required', 'Please check your email and verify your account.');
+            $('#modalAlert button').on('click', () => showForm('signInForm'));
+
+            user.sendEmailVerification();
+            firebase.auth().signOut();
+
+        } else {
+            // go to the app
+            window.location.href = "index.html";
+        }
+    });
+});
+
+
+
+function showForm(id) {
     $('form').not('#' + id).hide();
     $('#' + id).show();
+    $('input[type=text').val('');
+    $('input[type=password').val('');
 }
 
 
 
-function checkSignUpInfo() {
-    const email = $('#email').val();
-    const p1 = $('#password1').val();
-    const p2 = $('#password2').val();
-
-    if (email == "" ||
-        !validateEmail(email) ||
-        p1 == "" ||
-        p1.length < 6 ||
-        p1 != p2) {
-        $('#signupButton')[0].disabled = true;
-    } else {
-        $('#signupButton')[0].disabled = false;
-    }
-}
-
-
-function toggleSignIn(email, password) {
+function handleSignIn(email, password) {
 
     if (email == "" || email.length < 4) {
         modalAlertMessage('There was a problem', 'Please enter a valid email address.');
@@ -44,26 +56,7 @@ function toggleSignIn(email, password) {
 
     firebase.auth().signInWithEmailAndPassword(email, password)
         .then(function (result) {
-
-            // Attempt to sign in
-            firebase.auth().onAuthStateChanged(function (user) {
-                // we are not signed in
-                if (!user) {
-                    console.log("no user");
-                    window.location.href = "signin.html";
-                }
-
-                if (!user.emailVerified) {
-                    user.sendEmailVerification().then(function () {
-                        modalAlertMessage('Verification required', 'Please check your email and verify your account.');
-                    });
-                    return;
-                }
-
-                // go to the app
-                window.location.href = "index.html";
-            });
-
+            // signing in
         })
         .catch(function (error) {
 
@@ -93,8 +86,7 @@ function handleSignUp(email, password) {
 
     firebase.auth().createUserWithEmailAndPassword(email, password)
         .then(function (result) {
-            modalAlertMessage('Account created', 'Go back to signing and login');
-            $('#modalAlert button').on('click', () => window.location.href = "signin.html");
+            console.log("Account created");
         })
         .catch(function (error) {
 
@@ -121,6 +113,7 @@ function sendPasswordReset(email) {
     firebase.auth().sendPasswordResetEmail(email)
         .then(function () {
             modalAlertMessage('Password Reset Email Sent!', 'Check your email');
+            $('#modalAlert button').on('click', () => showForm('signInForm'));
 
         }).catch(function (error) {
             // Handle Errors here.
@@ -137,6 +130,7 @@ function sendPasswordReset(email) {
         });
 }
 
+
 function modalAlertMessage(title, msg) {
     $("#title").text(title);
     $("#message").text(msg);
@@ -150,6 +144,18 @@ function validateEmail(email) {
 }
 
 
-$(document).ready(function () {
-    firebase.initializeApp(common.firebaseConfig);
-});
+function checkSignUpInfo() {
+    const email = $('#signUpEmail').val();
+    const p1 = $('#signUpPassword1').val();
+    const p2 = $('#signUpPassword2').val();
+
+    if (email == "" ||
+        !validateEmail(email) ||
+        p1 == "" ||
+        p1.length < 6 ||
+        p1 != p2) {
+        $('#signUpButton')[0].disabled = true;
+    } else {
+        $('#signUpButton')[0].disabled = false;
+    }
+}

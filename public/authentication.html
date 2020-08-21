@@ -29,13 +29,13 @@
   <!-- Signin form -->
   <form id="signInForm" class="uk-form-stacked">
 
-    <h2><span class="uk-text-background"></span>Log in</h2>
+    <h2><span class="uk-text-background"></span>Welcome to BlinkBoard</h2>
 
     <div class="uk-margin">
       <label class="uk-form-label" for="form-stacked-text">Email</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: user"></span>
-        <input id="emailSignIn" class="uk-input uk-form-width-large" type="text">
+        <input id="signInEmail" class="uk-input uk-form-width-large" type="text">
       </div>
     </div>
 
@@ -43,23 +43,20 @@
       <label class="uk-form-label" for="form-stacked-text">Password</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: lock"></span>
-        <input id="password" class="uk-input uk-form-width-large" type="password">
+        <input id="signInPassword" class="uk-input uk-form-width-large" type="password">
       </div>
     </div>
-
 
     <div class="uk-margin">
-      <input id="signinButton" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom" type="button"
-        value="Sign In" />
+      <input id="signInButton" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom" type="button" value="Sign In" />
     </div>
 
-    <div class="uk-grid-match uk-child-width-1-2@m" uk-grid>
+    <div class="uk-margin uk-grid-match uk-child-width-1-2@m" uk-grid>
       <div>
-        <button onclick="test()" type="button" class="uk-align-right uk-button uk-button-text">Create New Account</button>
+        <button type="button" onclick="showForm('signUpForm')" class="uk-align-center uk-button uk-button-text">Create New Account</button>
       </div>
       <div>
-        <button type="button" onclick="window.location.href='forgotPassword.html';"
-          class="uk-align-right uk-button uk-button-text">Forgot Password?</button>
+        <button type="button" onclick="showForm('resetForm')" class="uk-align-center uk-button uk-button-text">Forgot Password?</button>
       </div>
     </div>
 
@@ -67,7 +64,7 @@
 
 
   <!-- Signup -->
-  <form id="signUpForm" class="uk-form-stacked">
+  <form id="signUpForm" class="uk-form-stacked uk-width-1-2">
 
     <h2><span class="uk-text-background"></span>Create an account</h2>
 
@@ -75,7 +72,7 @@
       <label class="uk-form-label" for="form-stacked-text">Email</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: user"></span>
-        <input id="emailSignUp" class="uk-input uk-form-width-large" type="text">
+        <input id="signUpEmail" class="uk-input uk-form-width-large" type="text">
       </div>
     </div>
 
@@ -83,7 +80,7 @@
       <label class="uk-form-label" for="form-stacked-text">Password</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: lock"></span>
-        <input id="password1" class="uk-input uk-form-width-large" type="password">
+        <input id="signUpPassword1" class="uk-input uk-form-width-large" type="password">
       </div>
     </div>
 
@@ -91,18 +88,21 @@
       <label class="uk-form-label" for="form-stacked-text">Password Confirmation</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: lock"></span>
-        <input id="password2" class="uk-input uk-form-width-large" type="password">
+        <input id="signUpPassword2" class="uk-input uk-form-width-large" type="password">
       </div>
+    </div>
+
+    <div class="uk-margin">
+      <p class="uk-text-muted">By clicking <span class="uk-text-emphasis">Create Account</span>, you agree to participate in the beta testing program of BlinkBoard. Your data will be encrypted and stored with <a href="https://firebase.google.com">Google Firebase</a>. <span class="uk-text-danger">The data will be anonymized and possibly used for future research and development of the Interaction Prototyping course</span>.</p>
     </div>
 
     <div class="uk-margin" uk-grid>
       <div class="uk-width-1-2@s">
-        <input id="signupButton" class="uk-button uk-button-primary uk-width-1-1" disabled="true" type="button"
+        <input id="signUpButton" class="uk-button uk-button-primary uk-width-1-1" disabled="true" type="button"
           value="Create account" />
       </div>
       <div class="uk-width-1-2@s">
-        <a href="signin.html"><input class="uk-button uk-button-default uk-width-1-1" type="button"
-            value="Cancel" /></a>
+        <input type="button" onclick="showForm('signInForm')" class="uk-button uk-button-default uk-width-1-1" type="button" value="Cancel" />
       </div>
     </div>
 
@@ -118,17 +118,16 @@
       <label class="uk-form-label" for="form-stacked-text">Email</label>
       <div class="uk-inline">
         <span class="uk-form-icon" uk-icon="icon: user"></span>
-        <input id="emailReset" class="uk-input uk-form-width-large" type="text">
+        <input id="resetFormEmail" class="uk-input uk-form-width-large" type="text">
       </div>
     </div>
 
     <div class="uk-margin" uk-grid>
       <div class="uk-width-1-2@s">
-        <input id="resetButton" class="uk-button uk-button-primary uk-width-1-1" type="button" value="Reset password" />
+        <input id="resetFormButton" class="uk-button uk-button-primary uk-width-1-1" type="button" value="Reset password" />
       </div>
       <div class="uk-width-1-2@s">
-        <a href="signin.html"><input class="uk-button uk-button-default uk-width-1-1" type="button"
-            value="Cancel" /></a>
+        <input type="button" onclick="showForm('signInForm')" class="uk-button uk-button-default uk-width-1-1" type="button" value="Cancel" />
       </div>
     </div>
 
@@ -159,27 +158,22 @@
       showForm('signInForm')
 
       // Sign in
-      $('#signinButton').on('click', () => toggleSignIn($('#emailSignIn').val(), $('#password').val()));
-      $('#createAccount').on('click', () => {showForm('signUpForm');});
+      $('#signInButton').on('click', () => handleSignIn($('#signInEmail').val(), $('#signInPassword').val()));
 
       // Sign up
-      $("#signupButton").on('click', () => handleSignUp($('#emailSignUp').val(), $('#password1').val()));
-      $('#emailSignUp').on('change keyup paste', checkSignUpInfo);
-      $('#password1').on('change keyup paste', checkSignUpInfo);
-      $('#password2').on('change keyup paste', checkSignUpInfo);
+      $("#signUpButton").on('click', () => handleSignUp($('#signUpEmail').val(), $('#signUpPassword1').val()));
+      $('#signUpEmail').on('change keyup paste', checkSignUpInfo);
+      $('#signUpPassword1').on('change keyup paste', checkSignUpInfo);
+      $('#signUpPassword2').on('change keyup paste', checkSignUpInfo);
+      
       // Reset pw
-      $("#resetButton").on('click', () => {
-        sendPasswordReset($("#emailReset").val());
+      $("#resetFormButton").on('click', () => {
+        sendPasswordReset($("#resetFormEmail").val());
       });
 
     });
 
-    function test()
-    {
-      console.log("sfd");
-      showForm('signUpForm')
-
-    }
+  
   </script>
 
 </body>
