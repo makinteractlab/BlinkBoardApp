@@ -137,14 +137,24 @@ function initStatusBar() {
     $('#statusBar').hide();
 
     // on click button
-    $('#statusBarSend').on('click', function () {
+    $('#statusBarSend').on('click', function (e) {
+        e.preventDefault();  // prevent reload
         sendStatusBarCommand()
     });
 
     // on enter
     $('#statusBarInput').on('submit', function (e) {
-        sendStatusBarCommand()
+        e.preventDefault();  // prevent reload
     });
+
+    // check if needed?
+    // $('#statusBarInput').keypress(function(e) {
+    //     // Enter pressed?
+    //     e.preventDefault();  // prevent reload
+    //     if(e.which == 10 || e.which == 13) {
+    //         sendStatusBarCommand();
+    //     }
+    // });
 }
 
 function sendStatusBarCommand() {
@@ -234,7 +244,10 @@ function setupSerialPort(portName) {
         baudRate: 115200
     }, function (err) {
         if (err) {
-            return console.log('Error: ', err.message)
+            warning("Cannot connect to saved port");
+            theUser.userData.settings.port= ""; // reset to nothing the portname
+            updateUserData();
+            return;
         }
     })
 
@@ -253,7 +266,7 @@ function setupSerialPort(portName) {
     // Need to wait few seconds (e.g. 3) for Arduino to connect
     setTimeout(initSequence, 100);
 
-    // Save on db
+    // Save on db the new port
     theUser.userData.settings.port = portName;
     updateUserData()
 }
