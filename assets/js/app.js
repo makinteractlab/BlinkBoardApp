@@ -21,6 +21,9 @@ const userData = {}
 
 $(document).ready(function () {
     
+    // Init
+    initUI();
+
     // Attempt to sign in
     firebase.auth().onAuthStateChanged(function (user) {
         // we are not signed in
@@ -37,7 +40,7 @@ $(document).ready(function () {
             userData.avatar = snapshot.val().avatar;
             userData.settings= snapshot.val().settings;
 
-            initUI();
+            updateUI();
         });
     });
 });
@@ -80,23 +83,14 @@ $("#portList").on('click', function () {
 
 // UI
 
-function initUI() {
-
-    // Sidebar
+function initUI()
+{
     $('#brightnessRange').on('input change', function(){
         if (!ready) return;
         writeJsonToPort({"cmd": "setBrightness", "value": this.value});
     });
 
-    $('#name').text(userData.name);
-    $('#email').text(userData.email);
-    $('#role').text(userData.role);
-    const avatarImg= userData.avatar+'?s=200'; // size 200
-    $('.avatar').attr("src", avatarImg)
-
-    // Status bar
-    if (userData.settings.debugging) $('#statusBar').slideDown();
-    else $('#statusBar').slideUp();
+    $('#statusBar').hide();
 
     $('#statusBarSend').on('click', function(){
         if (!ready) return;
@@ -117,9 +111,45 @@ function initUI() {
 
     // Set connection status
     setConnectionStatus ('disconnected');
+
+
+    // Animation off-canvas
+    UIkit.util.on('#sideBar', 'shown', function () {
+        rotateArrow (180, 200); // left
+    });
+
+    UIkit.util.on('#sideBar', 'hidden', function () {
+        rotateArrow (0, 200); // right
+    });
 }
 
 
+function updateUI() {
+
+    // Sidebar
+    $('#name').text(userData.name);
+    $('#email').text(userData.email);
+    $('#role').text(userData.role);
+    const avatarImg= userData.avatar+'?s=200'; // size 200
+    $('.avatar').attr("src", avatarImg)
+
+    // Status bar
+    if (userData.settings.debugging) $('#statusBar').slideDown();
+    else $('#statusBar').slideUp();
+}
+
+
+function rotateArrow (angle, ms)
+{
+    $('#arrow').animate({  borderSpacing: angle }, {
+        step: function(now,fx) {
+          $(this).css('-webkit-transform','rotate('+now+'deg)'); 
+          $(this).css('-moz-transform','rotate('+now+'deg)');
+          $(this).css('transform','rotate('+now+'deg)');
+        },
+        duration:ms
+    },'swing');
+}
 
 
 function setupSerialPort(portName) {
