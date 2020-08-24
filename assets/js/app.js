@@ -3,24 +3,24 @@ const shell = require('electron').shell;
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
 const common = require('./assets/js/common');
-const { lstat } = require('fs');
-const { timeStamp } = require('console');
+const {
+    lstat
+} = require('fs');
+const {
+    timeStamp
+} = require('console');
 
 const firebase = common.getFirebase();
 
-const EXP_MONTH = 12;
-const EXP_YEAR = 20;
-
 
 let port;
-let ready= false;
+let ready = false;
 
-
-const userData = {}
+const theUser = {}
 
 
 $(document).ready(function () {
-    
+
     // Init
     initUI();
 
@@ -32,13 +32,10 @@ $(document).ready(function () {
             window.location.href = "authentication.html";
             return;
         }
-        
-        firebase.database().ref('/users/' + user.uid).once('value').then(function(snapshot) {
-            userData.name= snapshot.val().name;
-            userData.email = snapshot.val().email;
-            userData.role = snapshot.val().role;
-            userData.avatar = snapshot.val().avatar;
-            userData.settings= snapshot.val().settings;
+
+        firebase.database().ref('/users/' + user.uid).once('value').then(function (snapshot) {
+            theUser.uid = user.uid;
+            theUser.userData = snapshot.val();
 
             updateUI();
         });
@@ -54,52 +51,26 @@ function signOut() {
 }
 
 
-function updateUserData(uid, userData)
-{
-    firebase.database().ref('users/' + uid).update(userData);
+function updateUserData() {
+    firebase.database().ref('users/' + theUser.uid).update(theUser.userData);
 }
 
 
-// Serial
-SerialPort.list((err, ports) => {
-    ports.forEach(element => {
-        $("#portList").append(new Option(element.comName, element.comName));
-    });
-});
 
-$("#portList").on('change', function () {
-    const portName = $("#portList option:selected").text();
-    setupSerialPort(portName);
-});
-
-$("#portList").on('click', function () {
-	if (port === undefined) return;
-	port.close(function (err) {
-		console.log('port closed', err);
-    });
-    setConnectionStatus('disconnected');
-});
 
 
 // UI
 
-function initUI()
-{
-    $('#brightnessRange').on('input change', function(){
-        if (!ready) return;
-        writeJsonToPort({"cmd": "setBrightness", "value": this.value});
-    });
+function initUI() {
 
-    $('#statusBar').hide();
+    // Set connection status
+    setConnectionStatus('disconnected');
 
-    $('#statusBarSend').on('click', function(){
-        if (!ready) return;
-        const toSend = `${$('#statusBarInput').val()}\n`;
-        port.write(toSend, function(err) {
-            if (err) console.log('Error on write: ', err.message)
-        });
-    });
-    
+    // Controls
+    initStatusBar();
+    initBrightnessControl();
+    initSerial();
+
     // Side Links
     $('#signoutLink').on('click', signOut);
 
@@ -109,53 +80,166 @@ function initUI()
         shell.openExternal(this.href);
     });
 
-    // Set connection status
-    setConnectionStatus ('disconnected');
-
-
     // Animation off-canvas
     UIkit.util.on('#sideBar', 'shown', function () {
-        rotateArrow (180, 200); // left
+        rotateArrow(180, 200); // left
     });
 
     UIkit.util.on('#sideBar', 'hidden', function () {
-        rotateArrow (0, 200); // right
+        rotateArrow(0, 200); // right
     });
 }
-
 
 function updateUI() {
 
     // Sidebar
-    $('#name').text(userData.name);
-    $('#email').text(userData.email);
-    $('#role').text(userData.role);
-    const avatarImg= userData.avatar+'?s=200'; // size 200
+    $('#name').text(theUser.userData.name);
+    $('#email').text(theUser.userData.email);
+    $('#role').text(theUser.userData.role);
+    const avatarImg = theUser.userData.avatar + '?s=200'; // size 200
     $('.avatar').attr("src", avatarImg)
 
+    // Settings from recorded values
+    $('#brightnessRange').val(theUser.userData.settings.lightBg);
+
     // Status bar
-    if (userData.settings.debugging) $('#statusBar').slideDown();
-    else $('#statusBar').slideUp();
+    if (theUser.userData.settings.debugging) showStatusBar();
+    else hideStatusBar();
+
+    // Connect to serial port
+    const lastPort = theUser.userData.settings.port
+    if (lastPort!=undefined) setupSerialPort (lastPort)
 }
 
 
-function rotateArrow (angle, ms)
-{
-    $('#arrow').animate({  borderSpacing: angle }, {
-        step: function(now,fx) {
-          $(this).css('-webkit-transform','rotate('+now+'deg)'); 
-          $(this).css('-moz-transform','rotate('+now+'deg)');
-          $(this).css('transform','rotate('+now+'deg)');
+function rotateArrow(angle, ms) {
+    $('#arrow').animate({
+        borderSpacing: angle
+    }, {
+        step: function (now, fx) {
+            $(this).css('-webkit-transform', 'rotate(' + now + 'deg)');
+            $(this).css('-moz-transform', 'rotate(' + now + 'deg)');
+            $(this).css('transform', 'rotate(' + now + 'deg)');
         },
-        duration:ms
-    },'swing');
+        duration: ms
+    }, 'swing');
+}
+
+
+function warning(text) {
+    UIkit.notification(`<span uk-icon='icon: warning'></span> ${text}`, {
+        status: 'warning'
+    })
+}
+
+// Status bar
+function initStatusBar() {
+    $('#statusBar').hide();
+
+    // on click button
+    $('#statusBarSend').on('click', function () {
+        sendStatusBarCommand()
+    });
+
+    // on enter
+    $('#statusBarInput').on('submit', function (e) {
+        sendStatusBarCommand()
+    });
+}
+
+function sendStatusBarCommand() {
+    if (!ready) {
+        warning('BlinkBoard not connected');
+        return;
+    }
+
+    const toSend = `${$('#statusBarInput').val()}\n`;
+    port.write(toSend, function (err) {
+        if (err) console.log('Error on write: ', err.message)
+    });
+}
+
+function setStatusOutput(text) {
+    $('#statusBarOutput').val(text);
+}
+
+function showStatusBar() {
+    $('#statusBar').slideDown();
+}
+
+function hideStatusBar() {
+    $('#statusBar').slideUp();
+}
+
+
+
+// Brightness Control
+function initBrightnessControl() {
+
+    $('#brightnessRange').on('input change', function () {
+        if (!ready) return;
+        theUser.userData.settings.lightBg = this.value;
+
+        writeJsonToPort({
+            "cmd": "setBrightness",
+            "value": this.value
+        });
+    });
+
+    // on release
+    $('#brightnessRange').on('click touchend', function () {
+        updateUserData();
+        $('#brightnessRange').val(theUser.userData.settings.lightBg)
+    });
+
+}
+
+
+
+// Serial
+function initSerial() {
+
+    // On selecting a port
+    $("#portList").on('change', function () {
+        const portName = $("#portList option:selected").text();
+        setupSerialPort(portName);
+    });
+
+    // on clicking (reset and list options)
+    $("#portList").on('click', function () {
+
+        // Reupdate the list on click
+        SerialPort.list((err, ports) => {
+            $("#portList").empty();
+            ports.forEach(element => {
+                $("#portList").append(new Option(element.comName, element.comName));
+            });
+        });
+
+        // None selected
+        if (port === undefined) return;
+
+        port.close(function (err) {
+            console.log('port closed', err);
+        });
+        setConnectionStatus('disconnected');
+    });
+
 }
 
 
 function setupSerialPort(portName) {
+
     port = new SerialPort(portName, {
         baudRate: 115200
-    });
+    }, function (err) {
+        if (err) {
+            return console.log('Error: ', err.message)
+        }
+    })
+
+    // Set port
+    $("#portList").empty().append(new Option(portName, portName));
 
     // read listener
     const parser = new Readline()
@@ -163,94 +247,79 @@ function setupSerialPort(portName) {
 
     parser.on('data', line => {
         console.log(`> ${line}`);
-        onSerialEvent (JSON.parse(line));
+        onSerialEvent(JSON.parse(line));
     })
 
     // Need to wait few seconds (e.g. 3) for Arduino to connect
-    setTimeout( initSequence, 3000);
+    setTimeout(initSequence, 100);
 
     // Save on db
-    userData.port = portName;
-   // updateUserData();
-}
-
-function initSequence()
-{
-    writeJsonToPort({cmd: "status"}); // sent to avoid parse fail
-    writeJsonToPort({cmd: "reset"});
+    theUser.userData.settings.port = portName;
+    updateUserData()
 }
 
 
-let statusMessage ="...";
+function initSequence() {
+    writeJsonToPort({
+        cmd: "status"
+    }); // sent to avoid parse fail
+    writeJsonToPort({
+        cmd: "status"
+    });
+    writeJsonToPort({
+        cmd: "reset"
+    });
+}
 
-function onSerialEvent (msg)
-{
+
+function onSerialEvent(msg) {
+    let statusMessage = "...";
+
     if (msg.status == "ready") {
-        setConnectionStatus ("ready");
+        setConnectionStatus("ready");
         statusMessage = "Ready";
-   
-    } else if (msg.status == "expired"){
-        setConnectionStatus ("expired");
+
+    } else if (msg.status == "expired") {
+        setConnectionStatus("expired");
         statusMessage = "Trial period expired";
-    } else{
+    } else {
         statusMessage = JSON.stringify(msg);
     }
 
-    $('#statusBarOutput').val (statusMessage);
+    $('#statusBarOutput').val(statusMessage);
 }
 
 
 
 
-function writeJsonToPort (msg)
-{
-    const toWrite = JSON.stringify(msg)+"\n";
+function writeJsonToPort(msg) {
+    const toWrite = JSON.stringify(msg) + "\n";
     console.log(toWrite)
-    port.write(toWrite, function(err) {
-		if (err) console.log('Error on write: ', err.message)
-	});
+    port.write(toWrite, function (err) {
+        if (err) console.log('Error on write: ', err.message)
+    });
 }
 
 
 function setConnectionStatus(status) {
     switch (status) {
         case 'ready':
-            ready= true;
+            ready = true;
             $('#statusReady').show();
             $('#statusDisconnected').hide();
             $('#statusExpired').hide();
             break;
         case 'disconnected':
-            ready= false;
+            ready = false;
             $('#statusReady').hide();
             $('#statusDisconnected').show();
             $('#statusExpired').hide();
             break;
         case 'expired':
-            ready= false;
+            ready = false;
             $('#statusReady').hide();
             $('#statusDisconnected').hide();
             $('#statusExpired').show();
             break;
     }
 }
-
-
-
-
-// to keep?
-$(document).ready(function () {
-
-    /*UIkit.util.on('#menu', 'show', function () {
-        // $('#arrowIcon')
-        console.log("show")
-    });
-
-    UIkit.util.on('#menu', 'toggle', function () {
-        console.log($('#arrowIcon').attr('uk-icon'));
-        $('#arrowIcon').rotate(180, {
-            duration: 2000,
-            easing: 'swing'
-        });
-    });*/
-});
