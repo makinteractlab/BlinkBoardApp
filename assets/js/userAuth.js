@@ -35,6 +35,7 @@ $(document).ready(function () {
                         name: user.uid,
                         email: user.email,
                         avatar: "http://gravatar.com/avatar/" + common.md5(user.email),
+                        role: "user",
                         settings: {
                             port: "",
                             lightBg: 20,
@@ -62,13 +63,6 @@ $(document).ready(function () {
 });
 
 
-
-function showForm(id) {
-    $('form').not('#' + id).hide();
-    $('#' + id).show();
-    $('input[type=text').val('');
-    $('input[type=password').val('');
-}
 
 
 
@@ -187,4 +181,11 @@ function checkSignUpInfo() {
     } else {
         $('#signUpButton')[0].disabled = false;
     }
+}
+
+function showForm(id) {
+    $('form').not('#' + id).hide();
+    $('#' + id).show();
+    $('input[type=text').val('');
+    $('input[type=password').val('');
 }

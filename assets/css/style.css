@@ -27,11 +27,6 @@ body {
 }
 
 
-#logo
-{
-  width: 40%;
-  margin-left: -10px;
-}
 
 #userEmail
 {
@@ -56,16 +51,41 @@ body {
   width: 100%;
 }
 
-<<<<<<< Updated upstream
 form, input, button, a, .uk-offcanvas
-=======
-form, input, button, nav, a, #modalAlert
->>>>>>> Stashed changes
 {
   -webkit-app-region: no-drag;
 }
 
 
+.logo
+{
+  width: 70%;
+  margin: -20px;
+  margin-bottom: 0.5em;
+}
+
+.avatar {
+  vertical-align: top;
+  width: 50px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.profile {
+  display: inline-block;
+  margin-left: 1em;
+}
+
+.profile p{
+  margin-top: -1.7em;
+  font-size: 0.8em;
+}
+
+.profile #role
+{
+  color: white;
+}
+/* Draft */
 
 /* .console {
   display: block;

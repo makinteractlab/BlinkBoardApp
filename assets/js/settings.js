@@ -60,7 +60,7 @@ $(document).ready(function () {
             const userData = snapshot.val();
             $('#email').val(userData.email);
             $('#name').val(userData.name);
-            $('#debug')[0].checked = userData.debug;
+            $('#debug')[0].checked = userData.settings.debugging;
         });
     });
 

@@ -48,15 +48,12 @@
   <div id="sideBar" uk-offcanvas="overlay: true; mode: push;">
     <div class="uk-offcanvas-bar uk-background-primary">
 
-      <ul class="uk-nav-primary uk-nav-parent-icon" uk-nav>
-        <li class="uk-active">
-          <img id="logo" src="assets/images/logo.png" />
-        </li>
-        <li class="uk-active uk-margin">
-          <p id="userEmail">email@email.com</p>
-        </li>
+      <div class="logo">
+        <img src="assets/images/logo_bb_white.svg" />
+      </div>
 
-        <li class="uk-nav-divider"></li>
+      <ul class="uk-nav-primary uk-nav-parent-icon" uk-nav>
+      
         <li><a id="accountLink" href="settings.html"><span class="uk-margin-small-right" uk-icon="icon: settings"></span>Settings</a>
 
         <li class="uk-parent">
@@ -71,7 +68,6 @@
               <select id="portList" class="uk-select">
                 <option disabled selected value> -- Select the USB connection -- </option>
               </select>
-              <label><input id="showStatusbarCheck" class="uk-checkbox" type="checkbox">Show statusbar</label>
             </li>
           </ul>
         </li>
@@ -82,6 +78,17 @@
           <span class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
         <li><a id="signoutLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: sign-out"></span>Sign out</a></li>
       </ul>
+
+      <!-- Profile -->
+      <div class="uk-active uk-container-expand uk-position-bottom uk-margin-left">
+        <img class="avatar" alt="avatar" src="" />
+        <div class="profile">
+          <h5 id="name">Name user</h5>
+          <p id="email">email@email.com</p>
+          <p id="role">User</p>
+        </div>
+      </div>
+
     </div>
   </div>
 

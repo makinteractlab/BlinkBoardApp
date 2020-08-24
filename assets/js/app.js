@@ -19,24 +19,9 @@ let ready= false;
 const userData = {}
 
 
-
 $(document).ready(function () {
     
-    initApp();
-    initUI();
-    // var database = firebase.database();
-    // firebase.database().ref('users/' + 123).set({
-    //     username: "asdf"
-    //   });
-});
-
-
-
-function initApp() {
-
-    // init Firebase
-
-    // state check
+    // Attempt to sign in
     firebase.auth().onAuthStateChanged(function (user) {
         // we are not signed in
         if (!user) {
@@ -44,23 +29,19 @@ function initApp() {
             window.location.href = "authentication.html";
             return;
         }
-/*
-        $('#userEmail').text(user.email);
-        userData.id = user.uid;
-        userData.email = user.email;
-        updateUserData();
+        
+        firebase.database().ref('/users/' + user.uid).once('value').then(function(snapshot) {
+            userData.name= snapshot.val().name;
+            userData.email = snapshot.val().email;
+            userData.role = snapshot.val().role;
+            userData.avatar = snapshot.val().avatar;
+            userData.settings= snapshot.val().settings;
 
-
-        // If serial port was defined, attempt to connect
-        firebase.database().ref('/users/' + userData.id).once('value').then(function(snapshot) {
-            const portName = snapshot.val().port;
-            if (portName!= undefined) setupSerialPort(portName);
+            initUI();
         });
-*/
     });
+});
 
-    
-}
 
 
 function signOut() {
@@ -70,9 +51,9 @@ function signOut() {
 }
 
 
-function updateUserData()
+function updateUserData(uid, userData)
 {
-    firebase.database().ref('users/' + userData.id).update(userData);
+    firebase.database().ref('users/' + uid).update(userData);
 }
 
 
@@ -100,21 +81,22 @@ $("#portList").on('click', function () {
 // UI
 
 function initUI() {
-    $('#accountLink').on('click', undefined);
-    $('#signoutLink').on('click', signOut);
 
+    // Sidebar
     $('#brightnessRange').on('input change', function(){
         if (!ready) return;
         writeJsonToPort({"cmd": "setBrightness", "value": this.value});
     });
 
-    // Status bar
-    $('#statusBar').hide();
+    $('#name').text(userData.name);
+    $('#email').text(userData.email);
+    $('#role').text(userData.role);
+    const avatarImg= userData.avatar+'?s=200'; // size 200
+    $('.avatar').attr("src", avatarImg)
 
-    $('#showStatusbarCheck').on ('click', function(){
-        if (this.checked) $('#statusBar').slideDown();
-        else $('#statusBar').slideUp();
-    });
+    // Status bar
+    if (userData.settings.debugging) $('#statusBar').slideDown();
+    else $('#statusBar').slideUp();
 
     $('#statusBarSend').on('click', function(){
         if (!ready) return;
@@ -124,13 +106,16 @@ function initUI() {
         });
     });
     
+    // Side Links
+    $('#signoutLink').on('click', signOut);
+
     // Open links to extetrnal browser
     $(document).on('click', 'a[href^="http"]', function (event) {
         event.preventDefault();
         shell.openExternal(this.href);
     });
 
-    // Set connection
+    // Set connection status
     setConnectionStatus ('disconnected');
 }
 
@@ -156,18 +141,12 @@ function setupSerialPort(portName) {
 
     // Save on db
     userData.port = portName;
-    updateUserData();
+   // updateUserData();
 }
 
 function initSequence()
 {
-    const d= new Date();
-    const init= {"cmd": "initialize", "month": d.getMonth()+1, "year": d.getFullYear()%100};
-    // activation is used only once and it is hardcoded
-    const activation = {cmd: "activate", month: EXP_MONTH, year: EXP_YEAR};
     writeJsonToPort({cmd: "status"}); // sent to avoid parse fail
-    writeJsonToPort(activation); // set for ID220 fall 2020
-    writeJsonToPort(init);
     writeJsonToPort({cmd: "reset"});
 }
 
