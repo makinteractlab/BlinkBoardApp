@@ -158,6 +158,14 @@ function sendPasswordReset(email) {
 }
 
 
+// Open links to extetrnal browser
+const shell = require('electron').shell;
+
+$(document).on('click', 'a[href^="http"]', function (event) {
+    event.preventDefault();
+    shell.openExternal(this.href);
+});
+
 
 function validateEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

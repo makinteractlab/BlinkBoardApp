@@ -56,7 +56,11 @@ body {
   width: 100%;
 }
 
+<<<<<<< Updated upstream
 form, input, button, a, .uk-offcanvas
+=======
+form, input, button, nav, a, #modalAlert
+>>>>>>> Stashed changes
 {
   -webkit-app-region: no-drag;
 }
