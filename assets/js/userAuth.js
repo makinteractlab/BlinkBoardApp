@@ -3,6 +3,7 @@ const common = require('./assets/js/common');
 const firebase = common.getFirebase();
 
 
+
 $(document).ready(function () {
 
     // Attempt to sign in
@@ -14,12 +15,45 @@ $(document).ready(function () {
             modalAlertMessage('Verification required', 'Please check your email and verify your account.');
             $('#modalAlert button').on('click', () => showForm('signInForm'));
 
+            // Need to verify account - signout
             user.sendEmailVerification();
             firebase.auth().signOut();
 
         } else {
-            // go to the app
-            window.location.href = "index.html";
+            // Sign in
+            // check if user exist in DB
+            firebase.database().ref('/users/' + user.uid).once('value').then(function (snapshot) {
+                let userData= snapshot.val();
+
+                // init user the first time
+                if (userData == null)
+                {
+                    const userData= {
+                        name: user.uid,
+                        email: user.email,
+                        avatar: "http://gravatar.com/avatar/" + common.md5(user.email),
+                        settings: {
+                            port: "",
+                            lightBg: 20,
+                            debugging: false
+                        }
+                    };
+                    // make entry in db
+                    firebase.database().ref('users/' + user.uid).set(userData, function(error) {
+                        if (error) {
+                          console.log(error);
+                        } else {
+                          // Data saved successfully!
+                          // go to the app
+                          window.location.href = "index.html";
+                        }
+                    });
+                }else{
+                    // user exists
+                    // go to the app
+                    window.location.href = "index.html";
+                }
+            });
         }
     });
 });
@@ -78,7 +112,7 @@ function handleSignUp(email, password) {
 
     firebase.auth().createUserWithEmailAndPassword(email, password)
         .then(function (result) {
-            console.log("Account created");
+
         })
         .catch(function (error) {
 

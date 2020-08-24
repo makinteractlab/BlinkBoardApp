@@ -2,7 +2,7 @@ const $ = require('jquery');
 var firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/database');
-
+var crypto = require('crypto');
 
 
 module.exports = {
@@ -16,13 +16,19 @@ module.exports = {
         appId: "1:587052739775:web:881bc0fe047818679bea0a"
     },
     debug: true,
-    getFirebase: initFirebase
+    getFirebase: getFirebase,
+    md5:md5
 };
 
 
-function initFirebase()
+function getFirebase()
 {
     // init Firebase
     firebase.initializeApp(module.exports.firebaseConfig);
     return firebase;
 }
+
+function md5(string) {
+    return crypto.createHash('md5').update(string).digest('hex');
+}
+
