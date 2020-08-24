@@ -3,6 +3,8 @@ const common = require('./assets/js/common');
 const firebase = common.getFirebase();
 
 
+const modalAlertMessage = common.modalAlertMessage;
+
 
 $(document).ready(function () {
 
@@ -12,23 +14,24 @@ $(document).ready(function () {
         if (user == null) return;
 
         if (!user.emailVerified) {
-            modalAlertMessage('Verification required', 'Please check your email and verify your account.');
-            $('#modalAlert button').on('click', () => showForm('signInForm'));
+            modalAlertMessage(  'Account created. Please check your email and verify your account.', 
+                                'success', 
+                                function(){showForm('signInForm')});
 
             // Need to verify account - signout
             user.sendEmailVerification();
             firebase.auth().signOut();
+            return;
 
         } else {
             // Sign in
             // check if user exist in DB
             firebase.database().ref('/users/' + user.uid).once('value').then(function (snapshot) {
-                let userData= snapshot.val();
+                let userData = snapshot.val();
 
                 // init user the first time
-                if (userData == null)
-                {
-                    const userData= {
+                if (userData == null) {
+                    const userData = {
                         name: user.uid,
                         email: user.email,
                         avatar: "http://gravatar.com/avatar/" + common.md5(user.email),
@@ -39,16 +42,16 @@ $(document).ready(function () {
                         }
                     };
                     // make entry in db
-                    firebase.database().ref('users/' + user.uid).set(userData, function(error) {
+                    firebase.database().ref('users/' + user.uid).set(userData, function (error) {
                         if (error) {
-                          console.log(error);
+                            console.log(error);
                         } else {
-                          // Data saved successfully!
-                          // go to the app
-                          window.location.href = "index.html";
+                            // Data saved successfully!
+                            // go to the app
+                            window.location.href = "index.html";
                         }
                     });
-                }else{
+                } else {
                     // user exists
                     // go to the app
                     window.location.href = "index.html";
@@ -72,11 +75,11 @@ function showForm(id) {
 function handleSignIn(email, password) {
 
     if (email == "" || email.length < 4) {
-        modalAlertMessage('There was a problem', 'Please enter a valid email address.');
+        modalAlertMessage('Please enter a valid email address.', 'danger');
         return;
     }
     if (password == "" || password.length < 6) {
-        modalAlertMessage('There was a problem', 'Please enter a valid password.');
+        modalAlertMessage('Please enter a valid password.', 'danger');
         return;
     }
 
@@ -90,11 +93,10 @@ function handleSignIn(email, password) {
             var errorMessage = error.message;
 
             if (errorCode === 'auth/wrong-password') {
-                modalAlertMessage('There was a problem', 'Wrong password.');
+                modalAlertMessage('Wrong password.', 'danger');
             } else {
-                modalAlertMessage('There was a problem', errorMessage);
+                modalAlertMessage(errorMessage, 'danger');
             }
-            modalAlertMessage('There was a problem', error);
         });
 }
 
@@ -102,11 +104,11 @@ function handleSignIn(email, password) {
 function handleSignUp(email, password) {
 
     if (email == "" || email.length < 4) {
-        modalAlertMessage('There was a problem', 'Please enter an email address.');
+        modalAlertMessage('Please enter an email address.', 'danger');
         return;
     }
     if (password == "" || password.length < 6) {
-        modalAlertMessage('There was a problem', 'Please enter a password of at least 6 characters.');
+        modalAlertMessage('Please enter a password of at least 6 characters.', 'danger');
         return;
     }
 
@@ -120,11 +122,10 @@ function handleSignUp(email, password) {
             var errorMessage = error.message;
 
             if (errorCode == 'auth/weak-password') {
-                modalAlertMessage('There was a problem', 'The password is too weak.');
+                modalAlertMessage('The password is too weak.', 'danger');
             } else {
-                modalAlertMessage('There was a problem', errorMessage);
-            }
-            modalAlertMessage('There was a problem', error);
+                modalAlertMessage(errorMessage, 'danger');
+            }            
         });
 }
 
@@ -132,14 +133,15 @@ function handleSignUp(email, password) {
 
 function sendPasswordReset(email) {
     if (email == "" || email.length < 4) {
-        modalAlertMessage('There was a problem', 'Please enter an email address.');
+        modalAlertMessage('Please enter an email address.', 'danger');
         return;
     }
 
     firebase.auth().sendPasswordResetEmail(email)
         .then(function () {
-            modalAlertMessage('Password Reset Email Sent!', 'Check your email');
-            $('#modalAlert button').on('click', () => showForm('signInForm'));
+            modalAlertMessage(  'Password Reset Email Sent! Check your email', 
+                                'success',
+                                function(){showForm('signInForm')});
 
         }).catch(function (error) {
             // Handle Errors here.
@@ -148,20 +150,13 @@ function sendPasswordReset(email) {
 
 
             if (errorCode == 'auth/invalid-email') {
-                modalAlertMessage('There was a problem', errorMessage);
+                modalAlertMessage(errorMessage, 'danger');
             } else if (errorCode == 'auth/user-not-found') {
-                modalAlertMessage('There was a problem', errorMessage);
+                modalAlertMessage(errorMessage, 'danger');
             }
-            modalAlertMessage('There was a problem', error);
         });
 }
 
-
-function modalAlertMessage(title, msg) {
-    $("#title").text(title);
-    $("#message").text(msg);
-    UIkit.modal('#modalAlert').show();
-}
 
 
 function validateEmail(email) {

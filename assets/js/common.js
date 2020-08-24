@@ -17,7 +17,8 @@ module.exports = {
     },
     debug: true,
     getFirebase: getFirebase,
-    md5:md5
+    md5:md5,
+    modalAlertMessage: modalAlertMessage
 };
 
 
@@ -32,3 +33,36 @@ function md5(string) {
     return crypto.createHash('md5').update(string).digest('hex');
 }
 
+
+// msg to write
+// type is 'success', 'danger or default
+function modalAlertMessage(msg, type, callBackOnClose) {
+
+    // default
+    const params = {
+        message: msg,
+        status: 'primary',
+        pos: 'top-center',
+        timeout: 2000
+    };
+
+    switch (type) {
+        case 'success':
+            params.message = `<span uk-icon='icon: check'></span> ${msg}`;
+            params.status = 'success';
+            break;
+        case 'danger':
+            params.message = `<span uk-icon='icon: warning'></span> ${msg}`;
+            params.status = 'danger';
+            break;
+    }
+
+    const notification = UIkit.notification(params);
+    if (!callBackOnClose) return;
+
+    UIkit.util.on(document, 'close', function (evt) {
+        if (evt.detail[0] === notification) {
+            callBackOnClose();
+        }
+    });
+}
