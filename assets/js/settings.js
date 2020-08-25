@@ -61,6 +61,8 @@ $(document).ready(function () {
             $('#email').val(userData.email);
             $('#name').val(userData.name);
             $('#debug')[0].checked = userData.settings.debugging;
+
+            $('#updateButton').attr("disabled", false);
         });
     });
 

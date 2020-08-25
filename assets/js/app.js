@@ -376,6 +376,12 @@ function showFirmwareVersion (v)
 // sketch
 function showSketch (visible)
 {
-    if (visible)$('#mainSketch').show();
-    else $('#mainSketch').hide();
+    if (visible){
+        $('#mainSketch').show();
+        $('#backgroundImage').hide();
+    }
+    else {
+        $('#mainSketch').hide();
+        $('#backgroundImage').show();
+    }
 }
