@@ -14,12 +14,26 @@ const firebase = common.getFirebase();
 
 
 let port;
-let ready = false;
-
+let connection;
 const theUser = {}
 
 
 $(document).ready(function () {
+
+    $('#mainSketch').hide();
+
+    // Set not ready
+    connection= initConnection(false, function(isReady){
+        setConnectionStatus(isReady);
+        
+        showSketch (isReady);
+
+        if (!isReady) return;
+
+        // Save on db the new port
+        theUser.userData.settings.port = port.path;
+        updateUserData()
+    });
 
     // Init
     initUI();
@@ -56,15 +70,27 @@ function updateUserData() {
 }
 
 
+function initConnection (ready, callback) {
+    setConnectionStatus(ready);
+
+    return new Proxy(JSON.parse ('{"ready":' + ready + '}'), {
+        set: function(target, property, value) {
+            target[property] = value;
+            callback(value);
+        },
+        get(target, phrase) { // intercept reading a property from dictionary
+            if (phrase in target) { // if we have it in the dictionary
+              return target[phrase]; // return the translation
+            }
+        }
+    });
+}
 
 
 
 // UI
 
 function initUI() {
-
-    // Set connection status
-    setConnectionStatus('disconnected');
 
     // Controls
     initStatusBar();
@@ -89,9 +115,10 @@ function initUI() {
         rotateArrow(0, 200); // right
     });
 
-    // Hardware firmware
+    // Hardware firmware click
     $('#statusReady').click(getFirmwareVersion);
 }
+
 
 function updateUI() {
 
@@ -106,14 +133,14 @@ function updateUI() {
     $('#brightnessRange').val(theUser.userData.settings.lightBg);
 
     // Status bar
-    if (theUser.userData.settings.debugging) showStatusBar();
+    if (theUser.userData.settings.debugging) showStatusBar()
     else hideStatusBar();
 
     // Connect to serial port
     const lastPort = theUser.userData.settings.port
     setupSerialPort (lastPort)
 
-    // Show screen
+    // Show screen by hiding splash
     $('#splashScreen').hide();
 }
 
@@ -163,15 +190,13 @@ function initStatusBar() {
 }
 
 function sendStatusBarCommand() {
-    if (!ready) {
+    if (!connection.ready) {
         warning('BlinkBoard not connected');
         return;
     }
 
     const toSend = `${$('#statusBarInput').val()}\n`;
-    port.write(toSend, function (err) {
-        if (err) console.log('Error on write: ', err.message)
-    });
+    writeToPort (toSend);
 }
 
 function setStatusOutput(text) {
@@ -180,11 +205,11 @@ function setStatusOutput(text) {
 
 function showStatusBar() {
     $('#statusBar').css('visibility', 'visible');
-    $('#statusBar').slideDown();
+    $('#statusBar').show();
 }
 
 function hideStatusBar() {
-    $('#statusBar').slideUp();
+    $('#statusBar').hide();
 }
 
 
@@ -193,7 +218,7 @@ function hideStatusBar() {
 function initBrightnessControl() {
 
     $('#brightnessRange').on('input change', function () {
-        if (!ready) return;
+        if (!connection.ready) return;
         theUser.userData.settings.lightBg = this.value;
 
         writeJsonToPort({
@@ -235,22 +260,24 @@ function initSerial() {
         // None selected
         if (port === undefined) return;
 
+        // Disconnect from current
+        connection.ready= false;
+
         port.close(function (err) {
             console.log('port closed', err);
         });
-        setConnectionStatus('disconnected');
+        
     });
-
 }
 
 
 function setupSerialPort(portName) {
 
-    if (portName==undefined || portName=="") 
-    {
+    if (portName==undefined || portName=="") {
         return warning("Select a valid serial port");
     }
 
+    // attempt new connection
     port = new SerialPort(portName, {
         baudRate: 115200
     }, function (err) {
@@ -276,10 +303,6 @@ function setupSerialPort(portName) {
 
     // Need to wait few seconds (e.g. 3) for Arduino to connect
     setTimeout(initSequence, 100);
-
-    // Save on db the new port
-    theUser.userData.settings.port = portName;
-    updateUserData()
 }
 
 
@@ -297,55 +320,43 @@ function initSequence() {
 
 
 function onSerialEvent(msg) {
-    let statusMessage = "...";
 
     if (msg.status == "ready") {
-        setConnectionStatus("ready");
-        statusMessage = "Ready";
-      
+        connection.ready= true;
+
 
     } else if (msg.version) {
         showFirmwareVersion (msg.version)
+    
     } else {
         
     }
 
-    statusMessage = JSON.stringify(msg);
-    $('#statusBarOutput').val(statusMessage);
+    // Update status
+    setStatusOutput (JSON.stringify(msg))
 }
 
 
-
-
-function writeJsonToPort(msg) {
-    const toWrite = JSON.stringify(msg) + "\n";
+function writeJsonToPort(json) {
+    const toWrite = JSON.stringify(json) + "\n";
     console.log(toWrite)
-    port.write(toWrite, function (err) {
+    writeToPort (toWrite);
+}
+
+function writeToPort(msg){
+    port.write(msg, function (err) {
         if (err) console.log('Error on write: ', err.message)
     });
 }
 
 
-function setConnectionStatus(status) {
-    switch (status) {
-        case 'ready':
-            ready = true;
-            $('#statusReady').show();
-            $('#statusDisconnected').hide();
-            $('#statusExpired').hide();
-            break;
-        case 'disconnected':
-            ready = false;
-            $('#statusReady').hide();
-            $('#statusDisconnected').show();
-            $('#statusExpired').hide();
-            break;
-        case 'expired':
-            ready = false;
-            $('#statusReady').hide();
-            $('#statusDisconnected').hide();
-            $('#statusExpired').show();
-            break;
+function setConnectionStatus(readyStatus) {
+    if (readyStatus){
+        $('#statusReady').show();
+        $('#statusDisconnected').hide();
+    }else{
+        $('#statusReady').hide();
+        $('#statusDisconnected').show();
     }
 }
 
@@ -360,4 +371,11 @@ function getFirmwareVersion()
 function showFirmwareVersion (v)
 {
     modalAlertMessage ('Firmware', `Your firmware is at version ${v}`);
+}
+
+// sketch
+function showSketch (visible)
+{
+    if (visible)$('#mainSketch').show();
+    else $('#mainSketch').hide();
 }

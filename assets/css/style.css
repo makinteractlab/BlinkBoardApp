@@ -104,7 +104,7 @@ a,
 .inactive {
   opacity: 0.4;
   filter: alpha(opacity=40);
-  /* msie */
+  pointer-events: none;
 }
 
 .splash {
@@ -113,13 +113,18 @@ a,
   left: 0;
   width: 100%;
   height: 100%;
-  background-color:#317EEF;
+  background-color:#f5f5f5;
 }
 
 .splash svg {
   height: 100%;
   width: 100%;
 }
+
+div[uk-spinner]{
+  color: #317EEF;
+}
+
 
 /* Draft */
 
