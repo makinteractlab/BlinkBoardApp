@@ -7,10 +7,14 @@ let sketch = new p5( p => {
   
     p.draw = () => {
       p.background(200);
-      p.fill(255,0,0);
+      p.fill(255);
       p.noStroke();
       p.rectMode(p.CENTER);
       p.rect(p.width/2, p.height/2, 100, 100);
   
     };
+
+
   }, 'mainSketch');
+
+

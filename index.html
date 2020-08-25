@@ -32,9 +32,8 @@
 
   <!-- Connection status -->
   <nav class="uk-navbar uk-position-top-right">
-    <span id="statusReady" class="uk-label uk-label-success">Ready</span>
-    <span id="statusExpired" class="uk-label uk-label-danger">Expired</span>
-    <span id="statusDisconnected" class="uk-label uk-label-warning">Disconnected</span>
+    <span id="statusReady" class="uk-label uk-label-success statusBadge">Ready</span>
+    <span id="statusDisconnected" class="uk-label uk-label-danger statusBadge">Disconnected</span>
   </nav>
 
   <!-- Navigation arrow -->
@@ -92,6 +91,12 @@
     </div>
   </div>
 
+  <!-- Splash -->
+  <div id="splashScreen" class="splash">
+    <img uk-img="data-src:assets/images/logo_bb_white.svg" uk-svg>
+    <div class="spinner" uk-spinner="ratio: 2"></div>
+  </div>
+
   <!-- homeScreen -->
   <div id="homeScreen">
 
@@ -118,11 +123,25 @@
         </div>
 
       </form>
-
     </nav>
 
   </div>
 
+
+
+
+
+  <!-- Modal for alert message -->
+  <div id="modalAlert" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <h2 id="title" class="uk-modal-title">Info</h2>
+      <p id="message"></p>
+      <p class="uk-text-right">
+        <button class="uk-button uk-button-default uk-modal-close" type="button">Ok</button>
+      </p>
+    </div>
+  </div>
 
 
   <!-- JS -->

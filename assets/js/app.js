@@ -88,6 +88,9 @@ function initUI() {
     UIkit.util.on('#sideBar', 'hidden', function () {
         rotateArrow(0, 200); // right
     });
+
+    // Hardware firmware
+    $('#statusReady').click(getFirmwareVersion);
 }
 
 function updateUI() {
@@ -108,7 +111,10 @@ function updateUI() {
 
     // Connect to serial port
     const lastPort = theUser.userData.settings.port
-    if (lastPort!=undefined) setupSerialPort (lastPort)
+    setupSerialPort (lastPort)
+
+    // Show screen
+    $('#splashScreen').hide();
 }
 
 
@@ -132,10 +138,17 @@ function warning(text) {
     })
 }
 
+
+function modalAlertMessage(title, msg) {
+    $("#title").text(title);
+    $("#message").text(msg);
+    UIkit.modal('#modalAlert').show();
+}
+
+
 // Status bar
 function initStatusBar() {
-    $('#statusBar').hide();
-
+    
     // on click button
     $('#statusBarSend').on('click', function (e) {
         e.preventDefault();  // prevent reload
@@ -147,14 +160,6 @@ function initStatusBar() {
         e.preventDefault();  // prevent reload
     });
 
-    // check if needed?
-    // $('#statusBarInput').keypress(function(e) {
-    //     // Enter pressed?
-    //     e.preventDefault();  // prevent reload
-    //     if(e.which == 10 || e.which == 13) {
-    //         sendStatusBarCommand();
-    //     }
-    // });
 }
 
 function sendStatusBarCommand() {
@@ -174,6 +179,7 @@ function setStatusOutput(text) {
 }
 
 function showStatusBar() {
+    $('#statusBar').css('visibility', 'visible');
     $('#statusBar').slideDown();
 }
 
@@ -240,6 +246,11 @@ function initSerial() {
 
 function setupSerialPort(portName) {
 
+    if (portName==undefined || portName=="") 
+    {
+        return warning("Select a valid serial port");
+    }
+
     port = new SerialPort(portName, {
         baudRate: 115200
     }, function (err) {
@@ -291,14 +302,15 @@ function onSerialEvent(msg) {
     if (msg.status == "ready") {
         setConnectionStatus("ready");
         statusMessage = "Ready";
+      
 
-    } else if (msg.status == "expired") {
-        setConnectionStatus("expired");
-        statusMessage = "Trial period expired";
+    } else if (msg.version) {
+        showFirmwareVersion (msg.version)
     } else {
-        statusMessage = JSON.stringify(msg);
+        
     }
 
+    statusMessage = JSON.stringify(msg);
     $('#statusBarOutput').val(statusMessage);
 }
 
@@ -335,4 +347,17 @@ function setConnectionStatus(status) {
             $('#statusExpired').show();
             break;
     }
+}
+
+
+// Firmware version
+
+function getFirmwareVersion()
+{
+    writeJsonToPort ({cmd:"version"});
+}
+
+function showFirmwareVersion (v)
+{
+    modalAlertMessage ('Firmware', `Your firmware is at version ${v}`);
 }
