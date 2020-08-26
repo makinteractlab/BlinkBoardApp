@@ -1,6 +1,6 @@
 const settings = {
   breadBoardSize: 300,
-  ledSize: 30,
+  ledSize: 40,
   ledStartCoord: {
     x: 51,
     y: 148
@@ -11,48 +11,55 @@ const settings = {
 
 
 
-const sketch = new p5(p => {
+const sketch = new p5 (p => {
 
   class BreadBoard {
 
     static Led = class {
+
+      states = ["off", "on", "blink2", "blink"];
 
       // in BreadBoard coordinate
       constructor(id, x, y, size) {
         this.x = x;
         this.y = y;
         this.sz = size;
-        this.on = true;
+        this.visible = true;
         this.id = id;
+        this.stateIndx = 0; // index of states
       }
 
       draw() {
-        if (!this.on) return;
+        if (!this.visible) return;
         p.fill(255, 0, 0);
         p.noStroke();
         p.rectMode(p.CENTER);
         p.rect(this.x, this.y, this.sz, this.sz)
       }
 
-      mousePressed() {
-        console.log(p.mouseX)
+      get state() {
+        return this.states[this.stateIndx];
+      }
+      get prevState() {
+        return this.states[(this.states.length + this.stateIndx - 1) % this.states.length]
+      }
+      nextState() {
+        this.stateIndx = (this.stateIndx + 1) % this.states.length;
       }
 
-      on() {
-        this.on = true;
+      show() {
+        this.visible = true;
       }
-      off() {
-        this.on = false;
+      hide() {
+        this.visible = false;
       }
       toggle() {
-        this.on = !this.on;
+        this.visible = !this.visible;
       }
-      click (mouse, callback){
-        if (mouse.x < this.x-this.sz/2 || mouse.x> this.x+this.sz/2) return;
-        if (mouse.y < this.y-this.sz/2 || mouse.y> this.y+this.sz/2) return;
-        // callback(this);
-        // console.log(this.id)
-        writeJsonToPort ({cmd: "setLed", led: this.id, "pattern": "on"} )
+      click(mouse, callback) {
+        if (mouse.x < this.x - this.sz / 2 || mouse.x > this.x + this.sz / 2) return;
+        if (mouse.y < this.y - this.sz / 2 || mouse.y > this.y + this.sz / 2) return;
+        callback(this);
       }
     }
 
@@ -62,9 +69,9 @@ const sketch = new p5(p => {
       this.y = y;
       this.scale = 1;
       this.ready = false;
-      this.leds = []
-      this.blinkSlowList = []
-      this.blinkFastList = []
+      this.leds = [];
+
+      this.reset();
 
       this.img = p.loadImage("assets/images/breadboard.svg", (img) => {
         this.scale = width / img.width;
@@ -74,87 +81,126 @@ const sketch = new p5(p => {
 
         // Create leds
         for (let i = 0; i < 25; i++) {
-          this.leds.push(new BreadBoard.Led(i+1,
+          // left side
+          this.leds.push(new BreadBoard.Led(i + 1,
             settings.ledStartCoord.x,
             settings.ledStartCoord.y + settings.ledVgap * i,
             settings.ledSize));
-          this.leds.push(new BreadBoard.Led(i+26,
+          // right side
+          this.leds.push(new BreadBoard.Led(i + 26,
             settings.ledStartCoord.x + settings.ledHgap,
             settings.ledStartCoord.y + settings.ledVgap * i,
             settings.ledSize));
         }
-
-
-        // test
-        // this.blinkSlowList= this.leds.filter( el => el.id <= 25 );
-        // this.blinkFastList= this.leds.filter( el => el.id > 25 );
       });
 
 
       // Blink slow
       setInterval(() => {
         this.blinkSlowList.forEach(led => led.toggle());
-      }, 1000);
+      }, 400);
 
       // Blink fast
       setInterval(() => {
         this.blinkFastList.forEach(led => led.toggle());
-      }, 500);
+      }, 200);
     }
 
     draw() {
       if (!this.ready) return;
 
-    
       p.push();
       p.translate(this.x - this.width / 2, this.y - this.height / 2);
       p.scale(this.scale);
 
+      // Draw leds
+      this.onList.forEach(led => led.draw())
+      this.blinkSlowList.forEach(led => led.draw());
+      this.blinkFastList.forEach(led => led.draw());
 
-      this.leds.forEach(led => led.draw())
-      // this.blinkSlowList.forEach(led => led.draw());
-      // this.blinkFastList.forEach(led => led.draw());
-      
+      // Draw breadboard
       p.image(this.img, 0, 0);
       p.pop();
     }
 
-    click()
-    {
+    click() {
       // transform mouse 
       let m = p.createVector(p.mouseX, p.mouseY);
-      m.sub(this.x - this.width/2, this.y - this.height/2);
+      m.sub(this.x - this.width / 2, this.y - this.height / 2);
       m.div(this.scale);
-      
-      // this.leds.forEach(led => led.click(m, function(led)
-      // {
-      //   console.log(led.id);
-      // }));
-      this.leds.forEach(led => led.click(m));
 
+      // If clicked callabck
+      this.leds.forEach(led => led.click(m, led => {
+
+        // remove the led from current list
+        switch (led.state) {
+          case "on":
+            this.onList = this.onList.filter(l => led.id != l.id);
+            break;
+          case "blink":
+            this.blinkFastList = this.blinkFastList.filter(l => led.id != l.id);
+            break;
+          case "blink2":
+            this.blinkSlowList = this.blinkSlowList.filter(l => led.id != l.id);
+            break;
+        }
+        // next state and add to list
+        led.nextState();
+
+        switch (led.state) {
+          case "on":
+            this.onList.push(led);
+            break;
+          case "blink":
+            this.blinkFastList.push(led);
+            break;
+          case "blink2":
+            this.blinkSlowList.push(led);
+            break;
+        }
+
+        // make sure Led is visible
+        led.show();
+
+        // speak to hardware
+        const cmd = {
+          cmd: "setLed",
+          "led": led.id,
+          "pattern": led.state
+        };
+        writeJsonToPort(cmd);
+      }));
+    }
+
+    reset() {
+      this.onList = []
+      this.blinkSlowList = []
+      this.blinkFastList = []
     }
 
   }
 
 
-
   // Main
-  let bb;
-
 
   p.setup = () => {
     // canvas size is specified in the CSS file (size of div #one)
     p.createCanvas($("#mainSketch").width(), $("#mainSketch").height());
-    bb = new BreadBoard(p.width / 2, p.height / 2, settings.breadBoardSize);
+    this.bb = new BreadBoard(p.width / 2, p.height / 2, settings.breadBoardSize);
   };
 
   p.draw = () => {
     p.background('#F2F2F2');
-    bb.draw()
+    this.bb.draw()
   };
 
   p.mousePressed = () => {
-    bb.click();
+    this.bb.click();
   }
+
+  p.onSerialEvent = (msg) => {
+    console.log(`sketch says ${JSON.stringify(msg)}`);
+  } 
+
 
 }, 'mainSketch');

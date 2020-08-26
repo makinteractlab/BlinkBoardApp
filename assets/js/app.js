@@ -324,12 +324,11 @@ function onSerialEvent(msg) {
     if (msg.status == "ready") {
         connection.ready= true;
 
-
     } else if (msg.version) {
         showFirmwareVersion (msg.version)
     
     } else {
-        
+        sketch.onSerialEvent (msg); // send the result to sketch
     }
 
     // Update status
