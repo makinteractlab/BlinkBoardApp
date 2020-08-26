@@ -13,6 +13,10 @@
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/js/uikit.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.5/dist/js/uikit-icons.min.js"></script>
 
+  <!-- Material icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+
   <!-- CSS -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" />
 
@@ -95,20 +99,53 @@
 
   <!-- Splash with spinner -->
   <div id="splashScreen" class="splash">
-    <img uk-img="data-src:assets/images/logo_bb_white.svg" uk-svg>
+    <img uk-img="data-src:assets/images/logo_white.svg" uk-svg>
     <div class="spinner" uk-spinner="ratio: 2"></div>
   </div>
 
   <!-- homeScreen -->
-  <div id="homeScreen">
-    
+  <div id="homeScreen" class="uk-container">
+
     <!-- Background image -->
     <div id="backgroundImage">
-      <img src="assets/images/logo_bb_white.svg">
+      <img src="assets/images/logo_white.svg">
     </div>
 
     <!-- Sketch -->
-    <div id="mainSketch"></div>
+    <div id="mainSketch" class="uk-container">
+      <nav class="menuBar uk-navbar uk-position-top">
+
+        <div class="uk-navbar-center uk-width-auto uk-light uk-background-primary">
+
+          <a class="uk-navbar-toggle" href="#">
+            <span>On</span>
+            <i class="material-icons md-24">lens</i>
+          </a>
+          <a class="uk-navbar-toggle" href="#">
+            <span>Off</span>
+            <i class="material-icons md-24">panorama_fish_eye
+            </i>
+          </a>
+          <a class="uk-navbar-toggle" href="#">
+            <span>Slow</span>
+            <i class="material-icons md-24">filter_1</i>
+          </a>
+          <a class="uk-navbar-toggle" href="#">
+            <span>Fast</span>
+            <i class="material-icons md-24">filter_2</i>
+          </a>
+
+          <hr class="uk-divider-vertical">
+          
+          <a class="uk-navbar-toggle" href="#">
+            <span>Clear</span>
+            <i class="material-icons md-24">clear</i>
+          </a>
+
+        </div>
+      </nav>
+
+    </div>
 
     <!-- Status bar -->
     <nav class="uk-navbar uk-position-bottom">

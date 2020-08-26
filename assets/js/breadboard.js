@@ -1,5 +1,5 @@
 const settings = {
-  breadBoardSize: 300,
+  breadBoardSize: 270,
   ledSize: 40,
   ledStartCoord: {
     x: 51,
@@ -208,7 +208,7 @@ const sketch = new p5 (p => {
   };
 
   p.draw = () => {
-    p.background('#F2F2F2');
+    p.background('#F5F5F5');
     this.bb.draw()
   };
 

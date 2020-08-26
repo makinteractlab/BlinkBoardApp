@@ -29,29 +29,7 @@ body {
   margin-top: -10px;
 }
 
-#homeScreen {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
 
-#mainStage, #mainSketch {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-#backgroundImage{
-  height: 100%;
-  width: 70%;
-  margin: auto;
-}
-
-#statusBar {
-  width: 100%;
-  visibility: hidden;
-}
 
 form,
 input,
@@ -123,8 +101,70 @@ a,
   width: 100%;
 }
 
+#homeScreen {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#mainStage, #mainSketch {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#backgroundImage{
+  height: 100%;
+  width: 70%;
+  margin: auto;
+}
+
+#statusBar {
+  width: 100%;
+  visibility: hidden;
+}
 
 
+.menuBar{
+  width: 80%;
+  margin: auto;
+}
+
+.menuBar>div
+{
+  min-height: 30px;
+  max-height: 50px;
+}
+
+.menuBar a
+{
+  min-height: 30px;
+  max-height: 50px;
+}
+
+.menuBar hr{
+  min-height: 10px;
+  max-height: 30px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.menuBar .uk-navbar-toggle
+{
+  display: block;
+  clear: both;
+  margin: auto;
+  text-align: center;
+}
+
+.menuBar .uk-navbar-toggle span
+{
+  display: block;
+  clear: both;
+  margin: auto;
+  text-align: center;
+}
 
 /* Draft */
 
