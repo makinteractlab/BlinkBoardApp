@@ -71,7 +71,7 @@ const sketch = new p5 (p => {
       this.ready = false;
       this.leds = [];
 
-      this.reset();
+      this.clear();
 
       this.img = p.loadImage("assets/images/breadboard.svg", (img) => {
         this.scale = width / img.width;
@@ -182,10 +182,12 @@ const sketch = new p5 (p => {
       led.show();
     }
 
-    reset() {
+    clear() {
       this.onList = []
       this.blinkSlowList = []
       this.blinkFastList = []
+
+      writeJsonToPort ({cmd:"reset"});
     }
 
     get json()
@@ -219,6 +221,11 @@ const sketch = new p5 (p => {
   p.onSerialEvent = (msg) => {
     console.log(`sketch says ${JSON.stringify(msg)}`);
   } 
+
+  p.clear = () => {
+    this.bb.clear();
+  }
+
 
 
 }, 'mainSketch');
