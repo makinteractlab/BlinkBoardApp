@@ -250,6 +250,7 @@ function initSerial() {
     // On selecting a port
     $("#portList").on('change', function () {
         const portName = $("#portList option:selected").text();
+        console.log(">>>>>>>>>>>>>>>>>>>  "+portName)
         setupSerialPort(portName);
     });
 

@@ -30,7 +30,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             devTools: DEBUG
         },
-        frame: false,
+        // frame: false,
         resizable: false,
         icon: path.join(__dirname, 'assets/icons/icon')
     })
@@ -42,6 +42,8 @@ function createWindow() {
         slashes: true
     }))
 
+    // No menu
+    mainWindow.setMenuBarVisibility(false)
 
     // Open the DevTools.
     DEBUG && mainWindow.webContents.openDevTools()

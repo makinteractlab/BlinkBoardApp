@@ -34,7 +34,7 @@ $(document).ready(function () {
                     const userData = {
                         name: user.uid,
                         email: user.email,
-                        avatar: "http://gravatar.com/avatar/" + common.md5(user.email),
+                        avatar: "https://gravatar.com/avatar/" + common.md5(user.email),
                         role: "User",
                         settings: {
                             port: "",
