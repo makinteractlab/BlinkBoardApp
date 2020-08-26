@@ -338,13 +338,14 @@ function onSerialEvent(msg) {
 
 
 function writeJsonToPort(json) {
+    if (!port) return;
     const toWrite = JSON.stringify(json) + "\n";
     console.log(toWrite)
     writeToPort (toWrite);
 }
 
 function writeToPort(msg){
-    port.write(msg, function (err) {
+    port && port.write(msg, function (err) {
         if (err) console.log('Error on write: ', err.message)
     });
 }
