@@ -40,6 +40,9 @@ const sketch = new p5 (p => {
       get state() {
         return this.states[this.stateIndx];
       }
+      set state(sName){
+        this.stateIndx = this.states.indexOf(sName) || 0;
+      }
       get prevState() {
         return this.states[(this.states.length + this.stateIndx - 1) % this.states.length]
       }
@@ -133,7 +136,10 @@ const sketch = new p5 (p => {
       this.leds.forEach(led => led.click(m, led => {
 
         // remove and add to correct visual list
-        this.updateVisual(led);
+        this.clearPrevVisual(led);
+        // led.nextState();
+        led.state= this.tool;
+        this.updateNewVisual(led);
 
         // speak to hardware
         const cmd = {
@@ -149,7 +155,7 @@ const sketch = new p5 (p => {
       }));
     }
 
-    updateVisual(led)
+    clearPrevVisual(led)
     {
       // remove the led from current list
       switch (led.state) {
@@ -163,9 +169,10 @@ const sketch = new p5 (p => {
           this.blinkSlowList = this.blinkSlowList.filter(l => led.id != l.id);
           break;
       }
+    }
+    updateNewVisual(led)
+    {      
       // next state and add to list
-      led.nextState();
-
       switch (led.state) {
         case "on":
           this.onList.push(led);
@@ -188,6 +195,10 @@ const sketch = new p5 (p => {
       this.blinkFastList = []
 
       writeJsonToPort ({cmd:"reset"});
+    }
+
+    setTool(tool){
+      this.tool = tool;
     }
 
     get json()
@@ -226,6 +237,9 @@ const sketch = new p5 (p => {
     this.bb.clear();
   }
 
+  p.setTool = (tool) => {
+    this.bb.setTool(tool)
+  }
 
 
 }, 'mainSketch');
