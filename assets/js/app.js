@@ -30,6 +30,9 @@ $(document).ready(function () {
 
         if (!isReady) return;
 
+        // set brightness to level stored
+        setBrightness (theUser.userData.settings.lightBg);
+
         // Save on db the new port
         theUser.userData.settings.port = port.path;
         updateUserData()
@@ -221,10 +224,7 @@ function initBrightnessControl() {
         if (!connection.ready) return;
         theUser.userData.settings.lightBg = this.value;
 
-        writeJsonToPort({
-            "cmd": "setBrightness",
-            "value": this.value
-        });
+        setBrightness(this.value);
     });
 
     // on release
@@ -232,7 +232,14 @@ function initBrightnessControl() {
         updateUserData();
         $('#brightnessRange').val(theUser.userData.settings.lightBg)
     });
+}
 
+function setBrightness (value)
+{
+    writeJsonToPort({
+        "cmd": "setBrightness",
+        "value": value
+    });
 }
 
 
@@ -284,6 +291,7 @@ function setupSerialPort(portName) {
         if (err) {
             warning("Cannot connect to saved port");
             theUser.userData.settings.port= ""; // reset to nothing the portname
+            $("#portList").empty(); // clean port
             updateUserData();
             return;
         }

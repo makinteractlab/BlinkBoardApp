@@ -132,35 +132,8 @@ const sketch = new p5 (p => {
       // If clicked callabck
       this.leds.forEach(led => led.click(m, led => {
 
-        // remove the led from current list
-        switch (led.state) {
-          case "on":
-            this.onList = this.onList.filter(l => led.id != l.id);
-            break;
-          case "blink":
-            this.blinkFastList = this.blinkFastList.filter(l => led.id != l.id);
-            break;
-          case "blink2":
-            this.blinkSlowList = this.blinkSlowList.filter(l => led.id != l.id);
-            break;
-        }
-        // next state and add to list
-        led.nextState();
-
-        switch (led.state) {
-          case "on":
-            this.onList.push(led);
-            break;
-          case "blink":
-            this.blinkFastList.push(led);
-            break;
-          case "blink2":
-            this.blinkSlowList.push(led);
-            break;
-        }
-
-        // make sure Led is visible
-        led.show();
+        // remove and add to correct visual list
+        this.updateVisual(led);
 
         // speak to hardware
         const cmd = {
@@ -169,7 +142,44 @@ const sketch = new p5 (p => {
           "pattern": led.state
         };
         writeJsonToPort(cmd);
+
+        // send to database
+        console.log(this.json)
+
       }));
+    }
+
+    updateVisual(led)
+    {
+      // remove the led from current list
+      switch (led.state) {
+        case "on":
+          this.onList = this.onList.filter(l => led.id != l.id);
+          break;
+        case "blink":
+          this.blinkFastList = this.blinkFastList.filter(l => led.id != l.id);
+          break;
+        case "blink2":
+          this.blinkSlowList = this.blinkSlowList.filter(l => led.id != l.id);
+          break;
+      }
+      // next state and add to list
+      led.nextState();
+
+      switch (led.state) {
+        case "on":
+          this.onList.push(led);
+          break;
+        case "blink":
+          this.blinkFastList.push(led);
+          break;
+        case "blink2":
+          this.blinkSlowList.push(led);
+          break;
+      }
+
+      // make sure Led is visible
+      led.show();
     }
 
     reset() {
@@ -178,6 +188,14 @@ const sketch = new p5 (p => {
       this.blinkFastList = []
     }
 
+    get json()
+    {
+      return {
+        "on": this.onList.map( led => led.id ),
+        "blink": this.blinkFastList.map( led => led.id ),
+        "blink2": this.blinkSlowList.map( led => led.id )
+      }
+    }
   }
 
 
