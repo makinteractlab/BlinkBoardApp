@@ -16,7 +16,7 @@ const firebase = common.getFirebase();
 let port;
 let connection;
 const theUser = {}
-
+const os = getOS();
 
 $(document).ready(function () {
 
@@ -248,7 +248,12 @@ function setBrightness (value)
 function initSerial() {
 
     // On selecting a port
-    $("#portList").on('change blur', function () {
+    let events = 'change';
+    if (os === 'Linux' || os === 'Windows'){
+        events = 'change blur'
+    }
+
+    $("#portList").on(events, function () {
         const portName = $("#portList option:selected").text();
         setupSerialPort(portName);
     });
@@ -393,3 +398,27 @@ function showSketch (visible)
         $('#backgroundImage').show();
     }
 }
+
+
+function getOS() {
+    var userAgent = window.navigator.userAgent,
+        platform = window.navigator.platform,
+        macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+        windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+        iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+        os = null;
+  
+    if (macosPlatforms.indexOf(platform) !== -1) {
+      os = 'MacOS';
+    } else if (iosPlatforms.indexOf(platform) !== -1) {
+      os = 'iOS';
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+      os = 'Windows';
+    } else if (/Android/.test(userAgent)) {
+      os = 'Android';
+    } else if (!os && /Linux/.test(platform)) {
+      os = 'Linux';
+    }
+  
+    return os;
+  }
