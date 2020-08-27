@@ -268,17 +268,6 @@ function initSerial() {
                 $("#portList").append(new Option(element.comName, element.comName));
             });
         });
-
-        // None selected
-        if (port === undefined) return;
-
-        // Disconnect from current
-        connection.ready= false;
-
-        port.close(function (err) {
-            console.log('port closed', err);
-        });
-        
     });
 }
 
@@ -287,6 +276,18 @@ function setupSerialPort(portName) {
 
     if (portName==undefined || portName=="") {
         return warning("Select a valid serial port");
+    }
+
+    // disconnect from previous
+    // None selected
+    if (port){
+
+        // Disconnect from current
+        connection.ready= false;
+
+        port.close(function (err) {
+            console.log('port closed', err);
+        });
     }
 
     // attempt new connection
