@@ -248,9 +248,8 @@ function setBrightness (value)
 function initSerial() {
 
     // On selecting a port
-    $("#portList").on('change', function () {
+    $("#portList").on('change blur', function () {
         const portName = $("#portList option:selected").text();
-        console.log(">>>>>>>>>>>>>>>>>>>  "+portName)
         setupSerialPort(portName);
     });
 
