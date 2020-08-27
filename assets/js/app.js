@@ -19,19 +19,19 @@ const theUser = {}
 const os = getOS();
 
 $(document).ready(function () {
-
+    
     $('#mainSketch').hide();
 
     // Set not ready
-    connection= initConnection(false, function(isReady){
+    connection = initConnection(false, function (isReady) {
         setConnectionStatus(isReady);
-        
-        showSketch (isReady);
+
+        showSketch(isReady);
 
         if (!isReady) return;
 
         // set brightness to level stored
-        setBrightness (theUser.userData.settings.lightBg);
+        setBrightness(theUser.userData.settings.lightBg);
 
         // Save on db the new port
         theUser.userData.settings.port = port.path;
@@ -73,17 +73,17 @@ function updateUserData() {
 }
 
 
-function initConnection (ready, callback) {
+function initConnection(ready, callback) {
     setConnectionStatus(ready);
 
-    return new Proxy(JSON.parse ('{"ready":' + ready + '}'), {
-        set: function(target, property, value) {
+    return new Proxy(JSON.parse('{"ready":' + ready + '}'), {
+        set: function (target, property, value) {
             target[property] = value;
             callback(value);
         },
         get(target, phrase) { // intercept reading a property from dictionary
             if (phrase in target) { // if we have it in the dictionary
-              return target[phrase]; // return the translation
+                return target[phrase]; // return the translation
             }
         }
     });
@@ -120,6 +120,15 @@ function initUI() {
 
     // Hardware firmware click
     $('#statusReady').click(getFirmwareVersion);
+
+    // Show update if available
+    common.getAppReleaseInfo().then( (result) => {
+        // console.log(`Current ${common.getAppVersion()}`)
+        // console.log(`Latest ${result.data.tag_name}`);
+        if (common.getAppVersion() != result.data.tag_name)
+        $('#updateLink').removeAttr('hidden');
+    });
+
 }
 
 
@@ -141,7 +150,7 @@ function updateUI() {
 
     // Connect to serial port
     const lastPort = theUser.userData.settings.port
-    setupSerialPort (lastPort)
+    setupSerialPort(lastPort)
 
     // Show screen by hiding splash
     $('#splashScreen').hide();
@@ -178,16 +187,16 @@ function modalAlertMessage(title, msg) {
 
 // Status bar
 function initStatusBar() {
-    
+
     // on click button
     $('#statusBarSend').on('click', function (e) {
-        e.preventDefault();  // prevent reload
+        e.preventDefault(); // prevent reload
         sendStatusBarCommand()
     });
 
     // on enter
     $('#statusBarInput').on('submit', function (e) {
-        e.preventDefault();  // prevent reload
+        e.preventDefault(); // prevent reload
     });
 
 }
@@ -199,7 +208,7 @@ function sendStatusBarCommand() {
     }
 
     const toSend = `${$('#statusBarInput').val()}\n`;
-    writeToPort (toSend);
+    writeToPort(toSend);
 }
 
 function setStatusOutput(text) {
@@ -234,8 +243,7 @@ function initBrightnessControl() {
     });
 }
 
-function setBrightness (value)
-{
+function setBrightness(value) {
     writeJsonToPort({
         "cmd": "setBrightness",
         "value": value
@@ -249,7 +257,7 @@ function initSerial() {
 
     // On selecting a port
     let events = 'change';
-    if (os === 'Linux' || os === 'Windows'){
+    if (os === 'Linux' || os === 'Windows') {
         events = 'change blur'
     }
 
@@ -274,16 +282,16 @@ function initSerial() {
 
 function setupSerialPort(portName) {
 
-    if (portName==undefined || portName=="") {
+    if (portName == undefined || portName == "") {
         return warning("Select a valid serial port");
     }
 
     // disconnect from previous
     // None selected
-    if (port){
+    if (port) {
 
         // Disconnect from current
-        connection.ready= false;
+        connection.ready = false;
 
         port.close(function (err) {
             console.log('port closed', err);
@@ -296,7 +304,7 @@ function setupSerialPort(portName) {
     }, function (err) {
         if (err) {
             warning("Cannot connect to saved port");
-            theUser.userData.settings.port= ""; // reset to nothing the portname
+            theUser.userData.settings.port = ""; // reset to nothing the portname
             $("#portList").empty(); // clean port
             updateUserData();
             return;
@@ -336,17 +344,17 @@ function initSequence() {
 function onSerialEvent(msg) {
 
     if (msg.status == "ready") {
-        connection.ready= true;
+        connection.ready = true;
 
     } else if (msg.version) {
-        showFirmwareVersion (msg.version)
-    
+        showFirmwareVersion(msg.version)
+
     } else {
-        sketch.onSerialEvent (msg); // send the result to sketch
+        sketch.onSerialEvent(msg); // send the result to sketch
     }
 
     // Update status
-    setStatusOutput (JSON.stringify(msg))
+    setStatusOutput(JSON.stringify(msg))
 }
 
 
@@ -354,10 +362,10 @@ function writeJsonToPort(json) {
     if (!port) return;
     const toWrite = JSON.stringify(json) + "\n";
     console.log(toWrite)
-    writeToPort (toWrite);
+    writeToPort(toWrite);
 }
 
-function writeToPort(msg){
+function writeToPort(msg) {
     port && port.write(msg, function (err) {
         if (err) console.log('Error on write: ', err.message)
     });
@@ -365,10 +373,10 @@ function writeToPort(msg){
 
 
 function setConnectionStatus(readyStatus) {
-    if (readyStatus){
+    if (readyStatus) {
         $('#statusReady').show();
         $('#statusDisconnected').hide();
-    }else{
+    } else {
         $('#statusReady').hide();
         $('#statusDisconnected').show();
     }
@@ -377,24 +385,22 @@ function setConnectionStatus(readyStatus) {
 
 // Firmware version
 
-function getFirmwareVersion()
-{
-    writeJsonToPort ({cmd:"version"});
+function getFirmwareVersion() {
+    writeJsonToPort({
+        cmd: "version"
+    });
 }
 
-function showFirmwareVersion (v)
-{
-    modalAlertMessage ('Firmware', `Your firmware is at version ${v}`);
+function showFirmwareVersion(v) {
+    modalAlertMessage('Firmware', `Your firmware is at version ${v}`);
 }
 
 // sketch
-function showSketch (visible)
-{
-    if (visible){
+function showSketch(visible) {
+    if (visible) {
         $('#mainSketch').show();
         $('#backgroundImage').hide();
-    }
-    else {
+    } else {
         $('#mainSketch').hide();
         $('#backgroundImage').show();
     }
@@ -408,18 +414,18 @@ function getOS() {
         windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
         iosPlatforms = ['iPhone', 'iPad', 'iPod'],
         os = null;
-  
+
     if (macosPlatforms.indexOf(platform) !== -1) {
-      os = 'MacOS';
+        os = 'MacOS';
     } else if (iosPlatforms.indexOf(platform) !== -1) {
-      os = 'iOS';
+        os = 'iOS';
     } else if (windowsPlatforms.indexOf(platform) !== -1) {
-      os = 'Windows';
+        os = 'Windows';
     } else if (/Android/.test(userAgent)) {
-      os = 'Android';
+        os = 'Android';
     } else if (!os && /Linux/.test(platform)) {
-      os = 'Linux';
+        os = 'Linux';
     }
-  
+
     return os;
-  }
+}

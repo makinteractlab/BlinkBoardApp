@@ -198,7 +198,10 @@ const sketch = new p5 (p => {
     }
 
     setTool(tool){
-      this.tool = tool;
+      if (this.tool == tool)
+        this.tool= "";
+      else
+        this.tool = tool;
     }
 
     get json()
@@ -218,6 +221,7 @@ const sketch = new p5 (p => {
     // canvas size is specified in the CSS file (size of div #one)
     p.createCanvas($("#mainSketch").width(), $("#mainSketch").height());
     this.bb = new BreadBoard(p.width / 2, p.height / 2, settings.breadBoardSize);
+
   };
 
   p.draw = () => {
@@ -238,8 +242,23 @@ const sketch = new p5 (p => {
   }
 
   p.setTool = (tool) => {
-    this.bb.setTool(tool)
+    this.bb.setTool(tool);
   }
 
 
 }, 'mainSketch');
+
+
+// Menu bar with toggles setup
+$('.menuBarToggle').on('click', function () {
+  
+  const prev= $('.menuBarToggleOn')[0];
+  $('.menuBarToggleOn').removeClass('menuBarToggleOn');
+
+  // get name
+  console.log($(this).find('span').text())
+
+  // check myself
+  if ( prev == this) return;
+  this.classList.add('menuBarToggleOn');
+});

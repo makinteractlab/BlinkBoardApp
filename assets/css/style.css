@@ -166,6 +166,16 @@ a,
   text-align: center;
 }
 
+.menuBarToggleOn
+{
+  color: white  !important; 
+}
+
+/* .uk-badge 
+{
+  color: white  !important; 
+  background-color: white !important;
+} */
 /* Draft */
 
 /* .console {

@@ -80,6 +80,10 @@
 
         <li><a id="documentationLink" href="https://makinteract.gitbook.io/blinkboard/">
             <span class="uk-margin-small-right" uk-icon="icon: question"></span>Documentation</a></li>
+        <li><a id="updateLink" href="https://github.com/makinteractlab/BlinkBoardApp/releases/latest" hidden>
+            <span class="uk-margin-small-right" uk-icon="icon: cloud-download"></span>Update
+            <span class="uk-badge uk-margin-small-left uk-background-primary"><strong>!</strong></span></a>
+          </li>
         <li><a id="signoutLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: sign-out"></span>Sign
             out</a></li>
       </ul>
@@ -114,25 +118,26 @@
     <!-- Sketch -->
     <div id="mainSketch" class="uk-container">
       <nav class="menuBar uk-navbar uk-position-top">
+
         <div class="uk-navbar-center uk-width-auto uk-light uk-background-primary">
-          
-          <a class="uk-navbar-toggle" href="javascript:sketch.setTool('off')">
+
+          <a class="uk-navbar-toggle menuBarToggle">
             <span>Off</span>
             <i class="material-icons md-24">panorama_fish_eye
             </i>
           </a>
 
-          <a class="uk-navbar-toggle" href="javascript:sketch.setTool('on')">
+          <a class="uk-navbar-toggle menuBarToggle">
             <span>On</span>
             <i class="material-icons md-24">flare</i>
           </a>
-          
-          <a class="uk-navbar-toggle" href="javascript:sketch.setTool('blink2')">
+
+          <a class="uk-navbar-toggle menuBarToggle">
             <span>Slow</span>
             <i class="material-icons md-24">fiber_smart_record</i>
           </a>
-          
-          <a class="uk-navbar-toggle" href="javascript:sketch.setTool('blink')">
+
+          <a class="uk-navbar-toggle menuBarToggle">
             <span>Fast</span>
             <i class="material-icons md-24">hdr_strong</i>
           </a>
@@ -144,14 +149,20 @@
             <i class="material-icons md-24">mediation</i>
           </a> -->
 
-          <hr class="uk-divider-vertical">
-
           <a class="uk-navbar-toggle" href="javascript:sketch.clear()">
             <span>Clear</span>
             <i class="material-icons md-24">visibility_off</i>
           </a>
 
+          <hr class="uk-divider-vertical uk-margin-left uk-margin-right">
+
+          <!-- <a class="uk-navbar-toggle" href="#">
+            <span>Update</span>
+            <i class="material-icons md-24">update</i>
+          </a> -->
+
         </div>
+
       </nav>
 
     </div>

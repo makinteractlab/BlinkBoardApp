@@ -3,10 +3,18 @@ var firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/database');
 var crypto = require('crypto');
+const {
+    Octokit
+} = require("@octokit/rest");
+var pjson = require('../../package.json');
+
+
+
+
 
 
 module.exports = {
-    firebaseConfig : {
+    firebaseConfig: {
         apiKey: "AIzaSyB3gZSdRbQZBcQFWfJYE8_giL-jr2TCcXY",
         authDomain: "blinkboard-c8374.firebaseapp.com",
         databaseURL: "https://blinkboard-c8374.firebaseio.com",
@@ -17,13 +25,34 @@ module.exports = {
     },
     debug: true,
     getFirebase: getFirebase,
-    md5:md5,
-    modalAlertMessage: modalAlertMessage
+    md5: md5,
+    modalAlertMessage: modalAlertMessage,
+    getAppVersion: getAppVersion,
+    getAppReleaseInfo: getAppReleaseInfo
 };
 
 
-function getFirebase()
+
+
+async function getAppReleaseInfo() {
+
+    const octokit = new Octokit()
+    const result = await octokit.request('GET /repos/{owner}/{repo}/releases/latest', {
+        owner: 'makinteractlab',
+        repo: 'BlinkBoardApp'
+    });
+    return result;
+}
+
+function getAppVersion()
 {
+    // access the version tag in package.json
+    return pjson.version;
+}
+
+
+function getFirebase() {
+
     // init Firebase
     firebase.initializeApp(module.exports.firebaseConfig);
     return firebase;
