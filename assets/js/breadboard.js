@@ -79,7 +79,7 @@ const sketch = new p5 (p => {
       this.img = p.loadImage("assets/images/breadboard.svg", (img) => {
         this.scale = width / img.width;
         this.width = width;
-        this.height = this.img.height * this.scale;
+        this.height = this.img.height*this.scale;
         this.ready = true;
 
         // Create leds
@@ -133,9 +133,8 @@ const sketch = new p5 (p => {
       m.div(this.scale);
 
       // if outside 
-      console.log(m);
-      if (m.x < 0 || m.x > this.width) console.log("out")
-      // if (m.y < 0 || m.y > this.height*this.scale) console.log("out")
+      if (m.x < 0 || m.x > this.img.width) return false;
+      if (m.y < 0 || m.y > this.img.height) return false;
 
       // If clicked callabck
       this.leds.forEach(led => led.click(m, led => {
@@ -238,7 +237,11 @@ const sketch = new p5 (p => {
   };
 
   p.mousePressed = () => {
-    this.bb.click();
+     const onBB= this.bb.click();
+     if (!onBB) {
+       p.setTool(""); 
+       deselectAllToggles(); 
+      }
   }
 
   p.onSerialEvent = (msg) => {
@@ -261,7 +264,7 @@ const sketch = new p5 (p => {
 $('.menuBarToggle').on('click', function () {
   
   const prev= $('.menuBarToggleOn')[0];
-  $('.menuBarToggleOn').removeClass('menuBarToggleOn');
+  deselectAllToggles();
 
   // get name
   const name = $(this).find('span').text();
@@ -279,3 +282,8 @@ $('.menuBarToggle').on('click', function () {
   if ( prev == this) return;
   this.classList.add('menuBarToggleOn');
 });
+
+function deselectAllToggles()
+{
+  $('.menuBarToggleOn').removeClass('menuBarToggleOn');
+}
