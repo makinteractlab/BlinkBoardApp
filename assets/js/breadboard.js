@@ -132,6 +132,11 @@ const sketch = new p5 (p => {
       m.sub(this.x - this.width / 2, this.y - this.height / 2);
       m.div(this.scale);
 
+      // if outside 
+      console.log(m);
+      if (m.x < 0 || m.x > this.width) console.log("out")
+      // if (m.y < 0 || m.y > this.height*this.scale) console.log("out")
+
       // If clicked callabck
       this.leds.forEach(led => led.click(m, led => {
 
@@ -153,6 +158,9 @@ const sketch = new p5 (p => {
         console.log(this.json)
 
       }));
+
+      // the user clicked on the breadbaord
+      return true;
     }
 
     clearPrevVisual(led)
@@ -256,7 +264,16 @@ $('.menuBarToggle').on('click', function () {
   $('.menuBarToggleOn').removeClass('menuBarToggleOn');
 
   // get name
-  console.log($(this).find('span').text())
+  const name = $(this).find('span').text();
+
+  switch(name)
+  {
+    case 'On': sketch.setTool('on'); break;
+    case 'Off': sketch.setTool('off'); break;
+    case 'Slow': sketch.setTool('blink2'); break;
+    case 'Fast': sketch.setTool('blink'); break;
+  }
+
 
   // check myself
   if ( prev == this) return;

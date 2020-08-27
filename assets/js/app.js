@@ -125,8 +125,19 @@ function initUI() {
     common.getAppReleaseInfo().then( (result) => {
         // console.log(`Current ${common.getAppVersion()}`)
         // console.log(`Latest ${result.data.tag_name}`);
-        if (common.getAppVersion() != result.data.tag_name)
+        
+        if (common.getAppVersion() == result.data.tag_name) return;
+        // show link
         $('#updateLink').removeAttr('hidden');
+        // update link to correct zip file
+        const os = getOS();
+        const link = result.data.assets.filter( asset => asset.name == os+'.zip')[0].browser_download_url;
+        if (link == undefined){
+            // keep the default link
+            return;
+        }
+        // replace link if found a suitable one
+        $('#updateLink').attr('href', link);
     });
 
 }
@@ -178,7 +189,7 @@ function warning(text) {
 }
 
 
-function modalAlertMessage(title, msg) {
+function modalAlertWindow(title, msg) {
     $("#title").text(title);
     $("#message").text(msg);
     UIkit.modal('#modalAlert').show();
@@ -392,7 +403,7 @@ function getFirmwareVersion() {
 }
 
 function showFirmwareVersion(v) {
-    modalAlertMessage('Firmware', `Your firmware is at version ${v}`);
+    modalAlertWindow('Firmware', `The current software version is ${common.getAppVersion()} and the firmware version is ${v}.`);
 }
 
 // sketch
