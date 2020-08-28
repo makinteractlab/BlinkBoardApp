@@ -9,15 +9,18 @@ const settings = {
   ledHgap: 510
 }
 
+const ledState = {
+  OFF: 'off',
+  ON: 'on',
+  FAST: 'blink',
+  SLOW: 'blink2'
+}
 
-
-const sketch = new p5 (p => {
+const sketch = new p5(p => {
 
   class BreadBoard {
 
     static Led = class {
-
-      states = ["off", "on", "blink2", "blink"];
 
       // in BreadBoard coordinate
       constructor(id, x, y, size) {
@@ -26,30 +29,20 @@ const sketch = new p5 (p => {
         this.sz = size;
         this.visible = true;
         this.id = id;
-        this.stateIndx = 0; // index of states
+        this.state = ledState.OFF
       }
 
       draw() {
-        if (!this.visible) return;
-        p.fill(255, 0, 0);
         p.noStroke();
         p.rectMode(p.CENTER);
+
+        if (this.visible) p.fill(255, 0, 0);
+        if (this.over) p.fill(0, 255, 255, 120);
+        
         p.rect(this.x, this.y, this.sz, this.sz)
       }
 
-      get state() {
-        return this.states[this.stateIndx];
-      }
-      set state(sName){
-        this.stateIndx = this.states.indexOf(sName) || 0;
-      }
-      get prevState() {
-        return this.states[(this.states.length + this.stateIndx - 1) % this.states.length]
-      }
-      nextState() {
-        this.stateIndx = (this.stateIndx + 1) % this.states.length;
-      }
-
+      
       show() {
         this.visible = true;
       }
@@ -62,8 +55,9 @@ const sketch = new p5 (p => {
       click(mouse, callback) {
         if (mouse.x < this.x - this.sz / 2 || mouse.x > this.x + this.sz / 2) return;
         if (mouse.y < this.y - this.sz / 2 || mouse.y > this.y + this.sz / 2) return;
-        callback(this);
+        callback && callback(this);
       }
+      
     }
 
     // Breadboard
@@ -79,7 +73,7 @@ const sketch = new p5 (p => {
       this.img = p.loadImage("assets/images/breadboard.svg", (img) => {
         this.scale = width / img.width;
         this.width = width;
-        this.height = this.img.height*this.scale;
+        this.height = this.img.height * this.scale;
         this.ready = true;
 
         // Create leds
@@ -138,11 +132,11 @@ const sketch = new p5 (p => {
 
       // If clicked callabck
       this.leds.forEach(led => led.click(m, led => {
-
+/*
         // remove and add to correct visual list
         this.clearPrevVisual(led);
         // led.nextState();
-        led.state= this.tool;
+        led.state = this.tool;
         this.updateNewVisual(led);
 
         // speak to hardware
@@ -155,15 +149,28 @@ const sketch = new p5 (p => {
 
         // send to database
         console.log(this.json)
-
+*/
       }));
 
       // the user clicked on the breadbaord
       return true;
     }
 
-    clearPrevVisual(led)
+    mouseOver()
     {
+      let m = p.createVector(p.mouseX, p.mouseY);
+      m.sub(this.x - this.width / 2, this.y - this.height / 2);
+      m.div(this.scale);
+
+      // if outside 
+      if (m.x < 0 || m.x > this.img.width) return false;
+      if (m.y < 0 || m.y > this.img.height) return false;
+
+      this.leds.forEach(led => led.mouseOver(m));
+      return true;
+    }
+
+    clearPrevVisual(led) {
       // remove the led from current list
       switch (led.state) {
         case "on":
@@ -177,8 +184,7 @@ const sketch = new p5 (p => {
           break;
       }
     }
-    updateNewVisual(led)
-    {      
+    updateNewVisual(led) {
       // next state and add to list
       switch (led.state) {
         case "on":
@@ -201,22 +207,23 @@ const sketch = new p5 (p => {
       this.blinkSlowList = []
       this.blinkFastList = []
 
-      writeJsonToPort ({cmd:"reset"});
+      writeJsonToPort({
+        cmd: "reset"
+      });
     }
 
-    setTool(tool){
+    setTool(tool) {
       if (this.tool == tool)
-        this.tool= "";
+        this.tool = "";
       else
         this.tool = tool;
     }
 
-    get json()
-    {
+    get json() {
       return {
-        "on": this.onList.map( led => led.id ),
-        "blink": this.blinkFastList.map( led => led.id ),
-        "blink2": this.blinkSlowList.map( led => led.id )
+        "on": this.onList.map(led => led.id),
+        "blink": this.blinkFastList.map(led => led.id),
+        "blink2": this.blinkSlowList.map(led => led.id)
       }
     }
   }
@@ -237,16 +244,20 @@ const sketch = new p5 (p => {
   };
 
   p.mousePressed = () => {
-     const onBB= this.bb.click();
-     if (!onBB) {
-       p.setTool(""); 
-       deselectAllToggles(); 
-      }
+    const onBB = this.bb.click();
+    if (!onBB) {
+      p.setTool("");
+      deselectAllToggles();
+    }
+  }
+
+  p.mouseMoved = () => {
+    this.bb.mouseOver();
   }
 
   p.onSerialEvent = (msg) => {
     console.log(`sketch says ${JSON.stringify(msg)}`);
-  } 
+  }
 
   p.clear = () => {
     this.bb.clear();
@@ -262,28 +273,34 @@ const sketch = new p5 (p => {
 
 // Menu bar with toggles setup
 $('.menuBarToggle').on('click', function () {
-  
-  const prev= $('.menuBarToggleOn')[0];
+
+  const prev = $('.menuBarToggleOn')[0];
   deselectAllToggles();
 
   // get name
   const name = $(this).find('span').text();
 
-  switch(name)
-  {
-    case 'On': sketch.setTool('on'); break;
-    case 'Off': sketch.setTool('off'); break;
-    case 'Slow': sketch.setTool('blink2'); break;
-    case 'Fast': sketch.setTool('blink'); break;
+  switch (name) {
+    case 'On':
+      sketch.setTool('on');
+      break;
+    case 'Off':
+      sketch.setTool('off');
+      break;
+    case 'Slow':
+      sketch.setTool('blink2');
+      break;
+    case 'Fast':
+      sketch.setTool('blink');
+      break;
   }
 
 
   // check myself
-  if ( prev == this) return;
+  if (prev == this) return;
   this.classList.add('menuBarToggleOn');
 });
 
-function deselectAllToggles()
-{
+function deselectAllToggles() {
   $('.menuBarToggleOn').removeClass('menuBarToggleOn');
 }
