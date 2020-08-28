@@ -23,7 +23,7 @@ module.exports = {
         messagingSenderId: "587052739775",
         appId: "1:587052739775:web:881bc0fe047818679bea0a"
     },
-    debug: true,
+    debug: false,
     getFirebase: getFirebase,
     md5: md5,
     modalAlertMessage: modalAlertMessage,

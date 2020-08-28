@@ -29,9 +29,13 @@
       },
       "makers": [
         {
-          "name": "@electron-forge/maker-squirrel",
+          "name": "@electron-forge/maker-wix",
           "config": {
-            "name": "BlinkBoard"
+            "name": "BlinkBoard",
+            "manufacturer": "MAKinteract Lab",
+            "ui": {
+              "chooseDirectory": true
+            }
           }
         },
         {
@@ -56,7 +60,8 @@
     "@electron-forge/maker-deb": "6.0.0-beta.52",
     "@electron-forge/maker-rpm": "6.0.0-beta.52",
     "@electron-forge/maker-squirrel": "6.0.0-beta.52",
-    "@electron-forge/maker-zip": "6.0.0-beta.52",
+    "@electron-forge/maker-wix": "^6.0.0-beta.53",
+    "@electron-forge/maker-zip": "^6.0.0-beta.52",
     "electron": "^5.0.5",
     "electron-rebuild": "^1.8.5"
   },
