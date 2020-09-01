@@ -170,9 +170,6 @@ function updateUI() {
 
 
 
-
-
-
 // Status bar
 function initStatusBar() {
 
@@ -372,7 +369,6 @@ function setConnectionStatus(readyStatus) {
 
 
 // Firmware version
-
 function getFirmwareVersion() {
     writeJsonToPort({
         cmd: "version"
@@ -416,7 +412,6 @@ function getOS() {
     } else if (!os && /Linux/.test(platform)) {
         os = 'Linux';
     }
-
     return os;
 }
 
