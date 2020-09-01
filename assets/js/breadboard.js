@@ -6,20 +6,23 @@ const breadboardParams = {
   },
   rowGap: 37,
   colGap: 510,
-  rows: 20,
+  rows: 25,
   led: {
     color: '#ff0000',
     overColor: '#ffff00ee',
-    size: 40
+    size: 40,
+    slowBlinkSpeed: 400,
+    fastBlinkSpeed: 200,
+    rowLength: 8
   }
 }
 
 const LedState =
 {
-  OFF: 0,
-  ON: 1,
-  SLOW: 2,
-  FAST: 3
+  OFF: "off",
+  ON: "on",
+  SLOW: "blink2",
+  FAST: "blink"
 }
 
 
@@ -30,7 +33,7 @@ const sketch = new p5(p => {
     static Led = class {
 
       // in BreadBoard coordinate
-      constructor(id, x, y, params) {
+      constructor(id, x, y, left, params) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -39,19 +42,27 @@ const sketch = new p5(p => {
         this.ledState = LedState.OFF;
         this.visibility = true;
         this.over= false;
+        this.left= left;
       }
 
       draw() {
         p.noStroke();
-
+        
+        // overlay
         if (this.over) {
           p.fill(this.params.overColor);
           p.push();
-          p.translate(this.x - this.sz / 2, this.y - this.sz / 2)
-        
-          p.rect(0, 0, this.sz*8, this.sz);
+          
+          if (this.left) {
+            p.translate(this.x - this.sz / 2, this.y - this.sz/2);
+            p.rect(0, 0, this.sz*this.params.rowLength, this.sz);
+          
+          }else {
+            p.translate(this.x+this.sz, this.y+this.sz/2);
+            p.rotate(p.PI);
+            p.rect(0, 0, this.sz*this.params.rowLength, this.sz);
+          }
           p.pop();
-          return; // no need to continue
         }
 
         if (!this.visibility || this.ledState == LedState.OFF) return;
@@ -109,52 +120,63 @@ const sketch = new p5(p => {
       // create leds
       const ledParams = params.led;
 
-      for (let i = 0; i < 25; i++) {
+      for (let i = 0; i < params.rows; i++) {
         // left side
         this.leds.push(new BreadBoard.Led(i + 1,
           params.ledOneCoord.x,
           params.ledOneCoord.y + params.rowGap * i,
+          true, //left
           ledParams));
         // right side
-        this.leds.push(new BreadBoard.Led(i + 26,
+        this.leds.push(new BreadBoard.Led(i + params.rows+1,
           params.ledOneCoord.x + params.colGap,
           params.ledOneCoord.y + params.rowGap * i,
+          false, //rigth
           ledParams));
       }
 
-      
+
+      // Blink slow
       setInterval(() => {
         this.slowLeds.forEach(led => led.visible = this.onBlinkSlow);
         this.onBlinkSlow = !this.onBlinkSlow;
-      }, 400);
+      }, ledParams.slowBlinkSpeed);
 
       // Blink fast
       setInterval(() => {
         this.fastLeds.forEach(led => led.visible = this.onBlinkFast);
         this.onBlinkFast = !this.onBlinkFast;
-      }, 200);
+      }, ledParams.fastBlinkSpeed);
 
 
     }
 
-
+    setLed (ledId, state){
+      this.leds.filter( l => l.id == ledId).map(l => l.state = state)
+    }
     getLeds(state){
       return this.leds.filter(led => led.state == state)
     }
     get slowLeds(){
       return this.getLeds(LedState.SLOW)
     }
+    set slowLeds(arrId){
+      this.leds.filter(led => arrId.includes(led.id)).map(led => led.state = LedState.SLOW)
+    }
     get fastLeds(){
       return this.getLeds(LedState.FAST)
     }
-    get onLed(){
+    set fastLeds(arrId){
+      this.leds.filter(led => arrId.includes(led.id)).map(led => led.state = LedState.FAST)
+    }
+    get onLeds(){
       return this.getLeds(LedState.ON)
     }
-
-    setLed (ledId, state){
-      this.leds.filter( l => l.id == ledId).map(l => l.state = state)
+    set onLeds(arrId){
+      this.leds.filter(led => arrId.includes(led.id)).map(led => led.state = LedState.ON)
     }
 
+    
     clear()
     {
       this.leds.map(l => l.state= LedState.OFF); // all leds off
@@ -194,22 +216,7 @@ const sketch = new p5(p => {
       return true;
     }
 
-
-    /*
-    get json() {
-      return {
-        "on": this.onList.map(led => led.id),
-        "blink": this.blinkFastList.map(led => led.id),
-        "blink2": this.blinkSlowList.map(led => led.id)
-      }
-    }
-
-
-    
-
-
-    /*
-    click() {
+    mousePressed() {
       // transform mouse 
       let m = p.createVector(p.mouseX, p.mouseY);
       m.sub(this.x - this.width / 2, this.y - this.height / 2);
@@ -220,78 +227,51 @@ const sketch = new p5(p => {
       if (m.y < 0 || m.y > this.img.height) return false;
 
       // If clicked callabck
-      this.leds.forEach(led => led.click(m, led => {
-/*
-        // remove and add to correct visual list
-        this.clearPrevVisual(led);
-        // led.nextState();
-        led.state = this.tool;
-        this.updateNewVisual(led);
+      this.leds.forEach(led => led.mousePressed(m, led => {
+        
+        // TO CHANGE
+        led.state = LedState.ON;
+        this.sendToHardware ([led]);
+      }));
 
-        // speak to hardware
+      // the user clicked on the breadbaord
+
+      return true;
+    }
+    
+    
+    get json() {
+      return {
+        "on": this.onLeds.map(led => led.id),
+        "slow": this.slowLeds.map(led => led.id),
+        "fast": this.fastLeds.map(led => led.id)
+      }
+    }
+    set json(src){
+        this.onLeds = src.on;
+        this.slowLeds = src.slow;
+        this.fastLeds = src.fast;
+
+        // update hardware
+        this.sendToHardware(this.onLeds)
+        this.sendToHardware(this.slowLeds)
+        this.sendToHardware(this.fastLeds)
+    }
+
+    sendToHardware (leds)
+    {
+      leds.forEach(led => {
         const cmd = {
           cmd: "setLed",
           "led": led.id,
           "pattern": led.state
         };
         writeJsonToPort(cmd);
-
-        // send to database
-        console.log(this.json)
-
-      }));
-
-      // the user clicked on the breadbaord
-      return true;
+      });
     }
 
-    
 
-    clearPrevVisual(led) {
-      // remove the led from current list
-      switch (led.state) {
-        case "on":
-          this.onList = this.onList.filter(l => led.id != l.id);
-          break;
-        case "blink":
-          this.blinkFastList = this.blinkFastList.filter(l => led.id != l.id);
-          break;
-        case "blink2":
-          this.blinkSlowList = this.blinkSlowList.filter(l => led.id != l.id);
-          break;
-      }
-    }
-    updateNewVisual(led) {
-      // next state and add to list
-      switch (led.state) {
-        case "on":
-          this.onList.push(led);
-          break;
-        case "blink":
-          this.blinkFastList.push(led);
-          break;
-        case "blink2":
-          this.blinkSlowList.push(led);
-          break;
-      }
-
-      // make sure Led is visible
-      led.show();
-    }
-
-    
-
-    setTool(tool) {
-      if (this.tool == tool)
-        this.tool = "";
-      else
-        this.tool = tool;
-    }
-
-    
-
-    */
-  }
+ }
 
 
   // Main
@@ -308,28 +288,26 @@ const sketch = new p5(p => {
   };
 
   p.mousePressed = () => {
-    // const onBB = this.bb.click();
-    // if (!onBB) {
-    //   p.setTool("");
-    //   deselectAllToggles();
-    // }
+    this.bb.mousePressed();
+
+    // console.log(JSON.stringify(this.bb.json)
   }
 
   p.mouseMoved = () => {
     this.bb.mouseMoved();
   }
 
+  p.keyPressed = () =>{
+    let src= JSON.parse('{"on":[2,3,5],"slow":[27,28],"fast":[1,26,4,43,25,50]}');
+    this.bb.json= src;
+  }
+
+
   p.onSerialEvent = (msg) => {
     Util.log(`${JSON.stringify(msg)}`, "Sketch");
   }
 
-  p.clear = () => {
-    // this.bb.clear();
-  }
 
-  p.setTool = (tool) => {
-    // this.bb.setTool(tool);
-  }
 
 
 }, 'mainSketch');
