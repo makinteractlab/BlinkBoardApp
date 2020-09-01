@@ -6,6 +6,7 @@ const breadboardParams = {
   },
   rowGap: 37,
   colGap: 510,
+  rows: 20,
   led: {
     color: '#ff0000',
     overColor: '#ffff00ee',
@@ -35,29 +36,40 @@ const sketch = new p5(p => {
         this.y = y;
         this.sz = params.size;
         this.params = params;
-        this.visibility = LedState.OFF;
+        this.ledState = LedState.OFF;
+        this.visibility = true;
         this.over= false;
       }
 
       draw() {
         p.noStroke();
-        p.rectMode(p.CENTER);
 
         if (this.over) {
           p.fill(this.params.overColor);
-          p.ellipse(this.x, this.y, this.sz, this.sz);
+          p.push();
+          p.translate(this.x - this.sz / 2, this.y - this.sz / 2)
+        
+          p.rect(0, 0, this.sz*8, this.sz);
+          p.pop();
           return; // no need to continue
         }
 
-        if (this.visibility == LedState.OFF) return;
+        if (!this.visibility || this.ledState == LedState.OFF) return;
         p.fill(this.params.color);
         p.ellipse(this.x, this.y, this.sz, this.sz);
       }
       
       set state(st){
-        this.visibility= st;
+        this.ledState= st;
+        this.visibility= true;
       }
       get state(){
+        return this.ledState;
+      }
+      set visible(v){
+        this.visibility= v;
+      }
+      get visible(){
         return this.visibility;
       }
 
@@ -110,18 +122,17 @@ const sketch = new p5(p => {
           ledParams));
       }
 
-      // Blink slow
-      // setInterval(() => {
-      //   if (this.onBlinkSlow)
-      //   this.slowLeds.forEach(led => led.setOn(this.onBlinkSlow));
-      //   this.onBlinkSlow = !this.onBlinkSlow;
-      // }, 400);
+      
+      setInterval(() => {
+        this.slowLeds.forEach(led => led.visible = this.onBlinkSlow);
+        this.onBlinkSlow = !this.onBlinkSlow;
+      }, 400);
 
-      // // Blink fast
-      // setInterval(() => {
-      //   this.fastLeds.forEach(led => led.setOn(this.onBlinkFast));
-      //   this.onBlinkFast = !this.onBlinkFast;
-      // }, 200);
+      // Blink fast
+      setInterval(() => {
+        this.fastLeds.forEach(led => led.visible = this.onBlinkFast);
+        this.onBlinkFast = !this.onBlinkFast;
+      }, 200);
 
 
     }
@@ -135,6 +146,9 @@ const sketch = new p5(p => {
     }
     get fastLeds(){
       return this.getLeds(LedState.FAST)
+    }
+    get onLed(){
+      return this.getLeds(LedState.ON)
     }
 
     setLed (ledId, state){
@@ -167,18 +181,7 @@ const sketch = new p5(p => {
     }
 
 
-    /*
-    get json() {
-      return {
-        "on": this.onList.map(led => led.id),
-        "blink": this.blinkFastList.map(led => led.id),
-        "blink2": this.blinkSlowList.map(led => led.id)
-      }
-    }
-
-
-    mouseMoved()
-    {
+    mouseMoved() {
       let m = p.createVector(p.mouseX, p.mouseY);
       m.sub(this.x - this.width / 2, this.y - this.height / 2);
       m.div(this.scale);
@@ -190,6 +193,19 @@ const sketch = new p5(p => {
       this.leds.forEach(led => led.mouseMoved(m));
       return true;
     }
+
+
+    /*
+    get json() {
+      return {
+        "on": this.onList.map(led => led.id),
+        "blink": this.blinkFastList.map(led => led.id),
+        "blink2": this.blinkSlowList.map(led => led.id)
+      }
+    }
+
+
+    
 
 
     /*
@@ -300,7 +316,7 @@ const sketch = new p5(p => {
   }
 
   p.mouseMoved = () => {
-    // this.bb.mouseMoved();
+    this.bb.mouseMoved();
   }
 
   p.onSerialEvent = (msg) => {
