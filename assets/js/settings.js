@@ -1,8 +1,6 @@
 const $ = require('jquery');
-const common = require('./assets/js/common');
-const firebase = common.getFirebase();
-
-const modalAlertMessage = common.modalAlertMessage;
+const Util = require('./assets/js/util');
+const firebase = Util.getFirebase();
 
 
 $(document).ready(function () {
@@ -19,11 +17,13 @@ $(document).ready(function () {
         window.location.href = "index.html";
     });
 
+
     $('#password').on('change keyup paste', function () {
         if ($(this).val().length > 0) $('#deleteButton').attr("disabled", false);
         else $('#deleteButton').attr("disabled", true);
     });
 
+    
     $('#deleteButton').on('click', function () {
         const user = firebase.auth().currentUser;
         const password = $('#password').val();
@@ -36,34 +36,35 @@ $(document).ready(function () {
 
             // delete the account
             user.delete().then(function () {
-                modalAlertMessage('Account successfully deleted', 'success', 
+                UI.modalAlertMessage('Account successfully deleted', 'success', 
                                 function(){firebase.auth().signOut()});
 
             }).catch(function (error) {
-                modalAlertMessage(error, 'danger');
+                UI.modalAlertMessage(error, 'danger');
             });
 
         }).catch(function (error) {
-            modalAlertMessage(error, 'danger');
+            UI.modalAlertMessage(error, 'danger');
         });
     });
+});
 
-    firebase.auth().onAuthStateChanged(function (user) {
 
-        // we are not signed in - should not be here
-        if (!user) {
-            window.location.href = "authentication.html";
-            return;
-        }
+// On status changes
+firebase.auth().onAuthStateChanged(function (user) {
 
-        firebase.database().ref('/users/' + user.uid).once('value').then(function (snapshot) {
-            const userData = snapshot.val();
-            $('#email').val(userData.email);
-            $('#name').val(userData.name);
-            $('#debug')[0].checked = userData.settings.debugging;
+    // we are not signed in - should not be here
+    if (!user) {
+        window.location.href = "authentication.html";
+        return;
+    }
 
-            $('#updateButton').attr("disabled", false);
-        });
+    firebase.database().ref('/users/' + user.uid).once('value').then(function (snapshot) {
+        const userData = snapshot.val();
+        $('#email').val(userData.email);
+        $('#name').val(userData.name);
+        $('#debug')[0].checked = userData.settings.debugging;
+
+        $('#updateButton').attr("disabled", false);
     });
-
 });

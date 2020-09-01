@@ -6,8 +6,8 @@ const BrowserWindow = electron.BrowserWindow
 
 const path = require('path')
 const url = require('url')
+const Util = require('./assets/js/util');
 
-var common = require('./assets/js/common');
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -15,7 +15,7 @@ var common = require('./assets/js/common');
 let mainWindow;
 
 // Debug flag
-const DEBUG = common.debug
+const DEBUG = Util.isDebugMode()
 
 
 function createWindow() {

@@ -256,7 +256,7 @@ const sketch = new p5(p => {
   }
 
   p.onSerialEvent = (msg) => {
-    console.log(`sketch says ${JSON.stringify(msg)}`);
+    Util.log(`${JSON.stringify(msg)}`, "Sketch");
   }
 
   p.clear = () => {

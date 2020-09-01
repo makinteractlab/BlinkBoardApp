@@ -1,8 +1,10 @@
 const $ = require('jquery');
-const shell = require('electron').shell;
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const common = require('./assets/js/common');
+const Util = require('./assets/js/util');
+
+
+
 const {
     lstat
 } = require('fs');
@@ -10,13 +12,15 @@ const {
     timeStamp
 } = require('console');
 
-const firebase = common.getFirebase();
 
-
+// Globals
 let port;
 let connection;
+const firebase = Util.getFirebase();
 const theUser = {}
 const os = getOS();
+
+
 
 $(document).ready(function () {
     
@@ -40,25 +44,25 @@ $(document).ready(function () {
 
     // Init
     initUI();
-
-    // Attempt to sign in
-    firebase.auth().onAuthStateChanged(function (user) {
-        // we are not signed in
-        if (!user) {
-            console.log("no user");
-            window.location.href = "authentication.html";
-            return;
-        }
-
-        firebase.database().ref('/users/' + user.uid).once('value').then(function (snapshot) {
-            theUser.uid = user.uid;
-            theUser.userData = snapshot.val();
-
-            updateUI();
-        });
-    });
 });
 
+
+// Attempt to sign in
+firebase.auth().onAuthStateChanged(function (user) {
+    // we are not signed in
+    if (!user) {
+        Util.log ("no user");
+        window.location.href = "authentication.html";
+        return;
+    }
+
+    firebase.database().ref('/users/' + user.uid).once('value').then(function (snapshot) {
+        theUser.uid = user.uid;
+        theUser.userData = snapshot.val();
+
+        updateUI();
+    });
+});
 
 
 function signOut() {
@@ -104,29 +108,26 @@ function initUI() {
     $('#signoutLink').on('click', signOut);
 
     // Open links to extetrnal browser
-    $(document).on('click', 'a[href^="http"]', function (event) {
-        event.preventDefault();
-        shell.openExternal(this.href);
-    });
+    Util.openLinksInBrowser();
 
     // Animation off-canvas
     UIkit.util.on('#sideBar', 'shown', function () {
-        rotateArrow(180, 200); // left
+        UI.rotate('#arrow', 180, 200); // left
     });
 
     UIkit.util.on('#sideBar', 'hidden', function () {
-        rotateArrow(0, 200); // right
+        UI.rotate('#arrow', 0, 200); // right
     });
 
     // Hardware firmware click
     $('#statusReady').click(getFirmwareVersion);
 
     // Show update if available
-    common.getAppReleaseInfo().then( (result) => {
-        // console.log(`Current ${common.getAppVersion()}`)
-        // console.log(`Latest ${result.data.tag_name}`);
+    Util.getLatestAppReleaseInfo().then( (result) => {
+        // Util.log (`Current ${Util.getCurrentAppVersion()}`)
+        // Util.log (`Latest ${result.data.tag_name}`);
         
-        if (common.getAppVersion() == result.data.tag_name) return;
+        if (Util.getCurrentAppVersion() == result.data.tag_name) return;
         // show link
         $('#updateLink').removeAttr('hidden');
         // update link to correct zip file
@@ -168,32 +169,8 @@ function updateUI() {
 }
 
 
-function rotateArrow(angle, ms) {
-    $('#arrow').animate({
-        borderSpacing: angle
-    }, {
-        step: function (now, fx) {
-            $(this).css('-webkit-transform', 'rotate(' + now + 'deg)');
-            $(this).css('-moz-transform', 'rotate(' + now + 'deg)');
-            $(this).css('transform', 'rotate(' + now + 'deg)');
-        },
-        duration: ms
-    }, 'swing');
-}
 
 
-function warning(text) {
-    UIkit.notification(`<span uk-icon='icon: warning'></span> ${text}`, {
-        status: 'warning'
-    })
-}
-
-
-function modalAlertWindow(title, msg) {
-    $("#title").text(title);
-    $("#message").text(msg);
-    UIkit.modal('#modalAlert').show();
-}
 
 
 // Status bar
@@ -209,12 +186,11 @@ function initStatusBar() {
     $('#statusBarInput').on('submit', function (e) {
         e.preventDefault(); // prevent reload
     });
-
 }
 
 function sendStatusBarCommand() {
     if (!connection.ready) {
-        warning('BlinkBoard not connected');
+        UI.showWarning('BlinkBoard not connected');
         return;
     }
 
@@ -263,6 +239,7 @@ function setBrightness(value) {
 
 
 
+
 // Serial
 function initSerial() {
 
@@ -294,7 +271,7 @@ function initSerial() {
 function setupSerialPort(portName) {
 
     if (portName == undefined || portName == "") {
-        return warning("Select a valid serial port");
+        return UI.showWarning("Select a valid serial port");
     }
 
     // disconnect from previous
@@ -305,7 +282,7 @@ function setupSerialPort(portName) {
         connection.ready = false;
 
         port.close(function (err) {
-            console.log('port closed', err);
+            Util.log ('port closed:' + err, "Error");
         });
     }
 
@@ -314,7 +291,7 @@ function setupSerialPort(portName) {
         baudRate: 115200
     }, function (err) {
         if (err) {
-            warning("Cannot connect to saved port");
+            UI.showWarning("Cannot connect to saved port");
             theUser.userData.settings.port = ""; // reset to nothing the portname
             $("#portList").empty(); // clean port
             updateUserData();
@@ -330,7 +307,7 @@ function setupSerialPort(portName) {
     port.pipe(parser)
 
     parser.on('data', line => {
-        console.log(`> ${line}`);
+        Util.log (`${line}`, "Serial_r");
         onSerialEvent(JSON.parse(line));
     })
 
@@ -372,13 +349,13 @@ function onSerialEvent(msg) {
 function writeJsonToPort(json) {
     if (!port) return;
     const toWrite = JSON.stringify(json) + "\n";
-    console.log(toWrite)
+    Util.log (toWrite, "Serial_w")
     writeToPort(toWrite);
 }
 
 function writeToPort(msg) {
     port && port.write(msg, function (err) {
-        if (err) console.log('Error on write: ', err.message)
+        if (err) Util.log ('Error on write: '+ err.message, "Error")
     });
 }
 
@@ -403,8 +380,9 @@ function getFirmwareVersion() {
 }
 
 function showFirmwareVersion(v) {
-    modalAlertWindow('Firmware', `The current software version is ${common.getAppVersion()} and the firmware version is ${v}.`);
+    UI.modalAlertWindow('Firmware', `The current software version is ${Util.getCurrentAppVersion()} and the firmware version is ${v}.`);
 }
+
 
 // sketch
 function showSketch(visible) {
@@ -418,6 +396,7 @@ function showSketch(visible) {
 }
 
 
+// Other helpers
 function getOS() {
     var userAgent = window.navigator.userAgent,
         platform = window.navigator.platform,
@@ -440,3 +419,4 @@ function getOS() {
 
     return os;
 }
+

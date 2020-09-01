@@ -135,31 +135,8 @@
 
 
 
+  <script src="assets/js/ui.js"></script>
   <script src="assets/js/userAuth.js"></script>
-  <script>
-    $(document).ready(function () {
-      
-      // signInForm, signUpForm, resetForm
-      showForm('signInForm')
-
-      // Sign in
-      $('#signInButton').on('click', () => handleSignIn($('#signInEmail').val(), $('#signInPassword').val()));
-
-      // Sign up
-      $("#signUpButton").on('click', () => handleSignUp($('#signUpEmail').val(), $('#signUpPassword1').val()));
-      $('#signUpEmail').on('change keyup paste', checkSignUpInfo);
-      $('#signUpPassword1').on('change keyup paste', checkSignUpInfo);
-      $('#signUpPassword2').on('change keyup paste', checkSignUpInfo);
-      
-      // Reset pw
-      $("#resetFormButton").on('click', () => {
-        sendPasswordReset($("#resetFormEmail").val());
-      });
-
-    });
-
-  
-  </script>
 
 </body>
 
