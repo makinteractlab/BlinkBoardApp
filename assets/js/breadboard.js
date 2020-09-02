@@ -268,26 +268,17 @@ const sketch = new p5(p => {
     }
   }
 
-  
+
   class ToolBar {
 
-    static Tool = class {
+/*    static Tool = class {
       constructor(id, cmd, toggle = false) {
         this.id = id;
         this.cmd = cmd;
         this.toggle = toggle;
         this.active = false;
 
-        $(id).on('click', () => {
-          if (this.toggle){
-            this.active = !this.active;
-          }else{
-            this.active= true;
-          }
-
-          if (this.active) this.select();
-          else this.deselect();
-        });
+        
 
       }
 
@@ -303,17 +294,27 @@ const sketch = new p5(p => {
       }
 
 
-    }
+    }*/
 
     constructor() {
-      this.tools = [new ToolBar.Tool('#offTool', 'cmd', true)]
+      
+      $('.tool').on('click', function() {
+        console.log(this.id)
+
+      });
 
     }
 
     
-
-    // deselectAllToggles() {
-    //   $('.menuBarToggleOn').removeClass('menuBarToggleOn');
+    select(id){
+      $(id).addClass('menuBarToggleOn');
+    }
+    deselect(id){
+      $(id).removeClass('menuBarToggleOn');
+    }
+    deselectAll(){
+      $('.menuBarToggleOn').removeClass('menuBarToggleOn');
+    }
 
 
   }
@@ -327,7 +328,7 @@ const sketch = new p5(p => {
   p.setup = () => {
     // canvas size is specified in the CSS file (size of div #one)
     p.createCanvas($("#mainSketch").width(), $("#mainSketch").height());
-    this.bb = new BreadBoard(p.width / 2, p.height / 2, breadboardParams);
+    this.bb = new BreadBoard(p.width / 3, p.height / 2, breadboardParams);
     this.tools = new ToolBar()
   };
 
@@ -339,7 +340,6 @@ const sketch = new p5(p => {
   p.mousePressed = () => {
     this.bb.mousePressed();
 
-    // console.log(JSON.stringify(this.bb.json)
   }
 
   p.mouseMoved = () => {
@@ -397,3 +397,29 @@ $('.menuBarToggle').on('click', function () {
 
 
 */
+
+
+
+// const sketch2 = new p5(p => {
+//   p.setup = () => {
+//     // canvas size is specified in the CSS file (size of div #one)
+//     p.createCanvas(300, 200);
+//   };
+
+//   p.draw = () => {
+//     p.background(255,0,0);
+//   };
+// }, 'test');
+
+
+
+// const sketch3 = new p5(p => {
+//   p.setup = () => {
+//     // canvas size is specified in the CSS file (size of div #one)
+//     p.createCanvas(300, 200);
+//   };
+
+//   p.draw = () => {
+//     p.background(255,200,0);
+//   };
+// }, 'test2');

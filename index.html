@@ -117,15 +117,15 @@
     <div id="mainSketch" class="uk-container">
       <nav class="menuBar uk-navbar uk-position-top">
 
-        <div class="uk-navbar-center uk-width-auto uk-light uk-background-primary">
+        <div id="toolbar" class="uk-navbar-center uk-width-auto uk-light uk-background-primary">
 
-          <a id="offTool" class="uk-navbar-toggle menuBarToggle">
+          <a id="offTool" class="uk-navbar-toggle tool menuBarToggle">
             <span>Off</span>
             <i class="material-icons md-24">panorama_fish_eye
             </i>
           </a>
 
-          <a class="uk-navbar-toggle menuBarToggle">
+          <a class="uk-navbar-toggle tool menuBarToggle">
             <span>On</span>
             <i class="material-icons md-24">flare</i>
           </a>
@@ -139,32 +139,49 @@
             <span>Fast</span>
             <i class="material-icons md-24">hdr_strong</i>
           </a>
-
-          <!-- <hr class="uk-divider-vertical">
           
-          <a class="uk-navbar-toggle" href="#">
-            <span>Input</span>
-            <i class="material-icons md-24">mediation</i>
-          </a> -->
-          
-          <hr class="uk-divider-vertical uk-margin-left uk-margin-right">
 
           <a class="uk-navbar-toggle" href="javascript:sketch.clear()">
             <span>Clear</span>
-            <i class="material-icons md-24">visibility_off</i>
+            <i class="material-icons md-24">delete</i>
           </a>
 
+          <hr class="uk-divider-vertical">
           
-          <!-- <a class="uk-navbar-toggle" href="#">
-            <span>Update</span>
-            <i class="material-icons md-24">update</i>
-          </a> -->
+          <a class="uk-navbar-toggle menuBarToggle">
+            <span>Fetch</span>
+            <i class="material-icons md-24">cloud_download</i>
+          </a>
+        
+          <a class="uk-navbar-toggle menuBarToggle">
+            <span>Upload</span>
+            <i class="material-icons md-24">cloud_upload</i>
+          </a>
+          
+          <hr class="uk-divider-vertical">
+
+          <a class="uk-navbar-toggle menuBarToggle">
+            <span>In-Out</span>
+            <i class="material-icons md-24">input</i>
+          </a>
+
+          <a class="uk-navbar-toggle menuBarToggle">
+            <span>Parts</span>
+            <i class="material-icons md-24">input</i>
+          </a>
           
         </div>
 
       </nav>
 
     </div>
+
+    
+
+
+
+
+
 
     <!-- Status bar -->
     <nav class="uk-navbar uk-position-bottom">
@@ -190,6 +207,8 @@
     </nav>
 
   </div>
+
+
 
 
   <!-- Modal for alert message -->
