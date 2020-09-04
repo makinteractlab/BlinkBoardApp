@@ -172,6 +172,10 @@ a,
   color: white  !important; 
 }
 
+.toolbar
+{
+  background-color: rgba(50, 50, 50, 0.7);
+}
 
 /* .uk-badge 
 {

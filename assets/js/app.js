@@ -127,6 +127,8 @@ function initUI() {
         // Util.log (`Current ${Util.getCurrentAppVersion()}`)
         // Util.log (`Latest ${result.data.tag_name}`);
         
+        if (Util.isDebugMode()) return;
+
         if (Util.getCurrentAppVersion() == result.data.tag_name) return;
         // show link
         $('#updateLink').removeAttr('hidden');

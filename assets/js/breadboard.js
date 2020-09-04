@@ -328,7 +328,7 @@ const sketch = new p5(p => {
   p.setup = () => {
     // canvas size is specified in the CSS file (size of div #one)
     p.createCanvas($("#mainSketch").width(), $("#mainSketch").height());
-    this.bb = new BreadBoard(p.width / 3, p.height / 2, breadboardParams);
+    this.bb = new BreadBoard(p.width / 2, p.height / 2, breadboardParams);
     this.tools = new ToolBar()
   };
 
@@ -400,26 +400,28 @@ $('.menuBarToggle').on('click', function () {
 
 
 
-// const sketch2 = new p5(p => {
-//   p.setup = () => {
-//     // canvas size is specified in the CSS file (size of div #one)
-//     p.createCanvas(300, 200);
-//   };
+const sketch2 = new p5(p => {
+  p.setup = () => {
+    // canvas size is specified in the CSS file (size of div #one)
+    p.createCanvas(300, 200);
+  };
 
-//   p.draw = () => {
-//     p.background(255,0,0);
-//   };
-// }, 'test');
+  p.draw = () => {
+    p.background(255,0,0);
+  };
+}, 'test1');
 
 
 
-// const sketch3 = new p5(p => {
-//   p.setup = () => {
-//     // canvas size is specified in the CSS file (size of div #one)
-//     p.createCanvas(300, 200);
-//   };
+const sketch3 = new p5(p => {
+  p.setup = () => {
+    // canvas size is specified in the CSS file (size of div #one)
+    p.createCanvas(300, 200);
+  };
 
-//   p.draw = () => {
-//     p.background(255,200,0);
-//   };
-// }, 'test2');
+  p.draw = () => {
+    p.background(255);
+    p.fill(0);
+    p.ellipse(p.mouseX, p.mouseY, 10, 10)
+  };
+}, 'test2');

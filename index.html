@@ -45,7 +45,7 @@
     </a>
   </nav>
 
-  <!-- Sidebar -->
+  <!-- Sidebar Left-->
   <div id="sideBar" uk-offcanvas="overlay: true; mode: push;">
     <div class="uk-offcanvas-bar uk-background-primary">
 
@@ -81,7 +81,7 @@
         <li><a id="updateLink" href="https://github.com/makinteractlab/BlinkBoardApp/releases/latest" hidden>
             <span class="uk-margin-small-right" uk-icon="icon: cloud-download"></span>Update
             <span class="uk-badge uk-margin-small-left uk-background-primary"><strong>!</strong></span></a>
-          </li>
+        </li>
         <li><a id="signoutLink" href="#"><span class="uk-margin-small-right" uk-icon="icon: sign-out"></span>Sign
             out</a></li>
       </ul>
@@ -139,7 +139,7 @@
             <span>Fast</span>
             <i class="material-icons md-24">hdr_strong</i>
           </a>
-          
+
 
           <a class="uk-navbar-toggle" href="javascript:sketch.clear()">
             <span>Clear</span>
@@ -147,36 +147,62 @@
           </a>
 
           <hr class="uk-divider-vertical">
-          
+
           <a class="uk-navbar-toggle menuBarToggle">
             <span>Fetch</span>
             <i class="material-icons md-24">cloud_download</i>
           </a>
-        
+
           <a class="uk-navbar-toggle menuBarToggle">
             <span>Upload</span>
             <i class="material-icons md-24">cloud_upload</i>
           </a>
-          
+
           <hr class="uk-divider-vertical">
 
           <a class="uk-navbar-toggle menuBarToggle">
-            <span>In-Out</span>
-            <i class="material-icons md-24">input</i>
+            <span>Tools</span>
+            <i class="material-icons md-24" uk-toggle="target: #sideTools">view_sidebar</i>
+
           </a>
 
-          <a class="uk-navbar-toggle menuBarToggle">
-            <span>Parts</span>
-            <i class="material-icons md-24">input</i>
-          </a>
-          
         </div>
 
       </nav>
 
     </div>
 
-    
+
+    <!-- Sidebar right: tools -->
+    <div id="sideTools" uk-offcanvas="overlay: true;flip: true; mode:push">
+      <div class="uk-dark uk-offcanvas-bar toolbar">
+        <ul class="uk-nav-primary uk-nav-parent-icon " uk-nav>
+
+          <h3>Tools</h3>
+
+          <ul uk-accordion="multiple: true">
+            <li class="uk-open">
+                <a class="uk-accordion-title" href="#">
+                  Ouput
+                </a>
+                <div class="uk-accordion-content">
+                  <div id="test1"></div>                
+                </div>
+            </li>
+            <li class="uk-open">
+              <a class="uk-accordion-title" href="#">
+                Input
+              </a>
+              <div class="uk-accordion-content">
+                <div id="test2"></div>                
+              </div>
+          </li>
+        </ul>
+        
+
+        </ul>
+      </div>
+    </div>
 
 
 
