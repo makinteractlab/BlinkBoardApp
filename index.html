@@ -178,9 +178,9 @@
       <div class="uk-offcanvas-bar toolSideBar">
         <ul class="uk-nav-primary uk-nav-parent-icon" uk-nav>
 
-          <h2>Tools</h2>
+          <!-- <h2>Tools</h2> -->
 
-          <ul uk-accordion="multiple: true">
+          <ul uk-accordion="multiple: true">  
             
             <li class="uk-open">
                 <a class="uk-accordion-title" href="#">
@@ -190,10 +190,20 @@
                     <canvas id="aChart" width="500" height="300"></canvas>
                     <fieldset class="uk-fieldset">
 
-                      <div class="uk-flex-center uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                      <div class="uk-flex-center uk-margin uk-margin-top uk-grid-small uk-child-width-auto uk-grid">
                           <label red><input class="uk-checkbox" type="checkbox"> A0</label>
                           <label green><input class="uk-checkbox" type="checkbox"> A1</label>
                           <label blue><input class="uk-checkbox" type="checkbox"> A2</label>
+                          <!-- <button uk-icon="icon: play-circle"></button> -->
+                          
+                        <span style="margin-top: -2px" class="material-icons">
+                          play_circle_filled
+                        </span>
+                        <span style="margin-top: -2px" class="material-icons">
+                          pause_circle_filled
+                        </span>
+
+
                       </div>
            
                   </fieldset>
@@ -202,10 +212,44 @@
             
             <li class="uk-open">
               <a class="uk-accordion-title" href="#">
-                Input
+                Output
               </a>
+              
               <div class="uk-accordion-content">
-                <div id="test2"></div>                
+               
+                <span class="uk-badge uk-light uk-background-primary">D0: <span class="accent">HIGH</span></span>
+                <fieldset class="uk-fieldset uk-margin-top">
+                    <div class="uk-grid-small uk-grid">
+                      <label><input class="uk-radio" type="radio" name="radio2"> L</label>
+                      <label><input class="uk-radio" type="radio" name="radio2"> H</label>
+                      <label><input class="uk-radio" type="radio" name="radio2"> PWM </label>
+                      <input id='xxx' class="uk-range uk-width-expand" type="range" value="0" min="0" max="100" step="1">
+                    </div>
+                </fieldset>
+
+                <hr class="uk-nav-divider"></hr>
+
+                <span class="uk-text-large uk-margin-top uk-badge uk-light uk-background-primary">D1: 100%</span>
+                <fieldset class="uk-fieldset uk-margin-top">
+                  <div class="uk-grid-small uk-grid">
+                    <label><input class="uk-radio" type="radio" name="radio2b"> L</label>
+                    <label><input class="uk-radio" type="radio" name="radio2b"> H</label>
+                    <label><input class="uk-radio" type="radio" name="radio2b"> PWM </label>
+                    <input id='xxx' class="uk-range uk-width-expand" type="range" value="0" min="0" max="100" step="1">
+                  </div>
+                </fieldset>
+
+
+                <hr class="uk-nav-divider"></hr>
+
+                <span class="uk-text-large uk-margin-top uk-badge uk-light uk-background-primary">D2: 0V</span>
+                <fieldset class="uk-fieldset uk-margin-top">
+                  <div class="uk-grid-small uk-grid">
+                    <label><input class="uk-radio" type="radio" name="radio2"> V </label>
+                    <input id='xxx' class="uk-range uk-width-expand" type="range" value="0" min="0" max="100" step="1">
+                  </div>
+                </fieldset>
+
               </div>
           </li>
         </ul>
@@ -214,9 +258,6 @@
         </ul>
       </div>
     </div>
-
-
-
 
 
 

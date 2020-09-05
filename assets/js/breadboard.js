@@ -413,18 +413,18 @@ $('.menuBarToggle').on('click', function () {
 
 
 
-const sketch3 = new p5(p => {
-  p.setup = () => {
-    // canvas size is specified in the CSS file (size of div #one)
-    p.createCanvas(300, 200);
-  };
+// const sketch3 = new p5(p => {
+//   p.setup = () => {
+//     // canvas size is specified in the CSS file (size of div #one)
+//     p.createCanvas(300, 200);
+//   };
 
-  p.draw = () => {
-    p.background(255);
-    p.fill(0);
-    p.ellipse(p.mouseX, p.mouseY, 10, 10)
-  };
-}, 'test2');
+//   p.draw = () => {
+//     p.background(255);
+//     p.fill(0);
+//     p.ellipse(p.mouseX, p.mouseY, 10, 10)
+//   };
+// }, 'test2');
 
 
 

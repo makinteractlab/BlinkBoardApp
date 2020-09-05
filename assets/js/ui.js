@@ -59,3 +59,4 @@ class UI {
         UIkit.modal('#modalAlert').show();
     }
 }
+

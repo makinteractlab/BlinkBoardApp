@@ -202,3 +202,8 @@ label[blue]
 {
   color: #3e95cd;
 }
+
+.accent{
+  color: #3e95cd;
+  font-weight: bold;
+}
