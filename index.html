@@ -162,7 +162,7 @@
 
           <a class="uk-navbar-toggle menuBarToggle">
             <span>Tools</span>
-            <i class="material-icons md-24" uk-toggle="target: #sideTools">view_sidebar</i>
+            <i class="material-icons md-24" uk-toggle="target: #toolSideBar">view_sidebar</i>
 
           </a>
 
@@ -174,21 +174,32 @@
 
 
     <!-- Sidebar right: tools -->
-    <div id="sideTools" uk-offcanvas="overlay: true;flip: true; mode:push">
-      <div class="uk-dark uk-offcanvas-bar toolbar">
-        <ul class="uk-nav-primary uk-nav-parent-icon " uk-nav>
+    <div id="toolSideBar" uk-offcanvas="overlay: true;flip: true; mode:push">
+      <div class="uk-offcanvas-bar toolSideBar">
+        <ul class="uk-nav-primary uk-nav-parent-icon" uk-nav>
 
-          <h3>Tools</h3>
+          <h2>Tools</h2>
 
           <ul uk-accordion="multiple: true">
+            
             <li class="uk-open">
                 <a class="uk-accordion-title" href="#">
-                  Ouput
+                  Input Voltage
                 </a>
                 <div class="uk-accordion-content">
-                  <div id="test1"></div>                
+                    <canvas id="aChart" width="500" height="300"></canvas>
+                    <fieldset class="uk-fieldset">
+
+                      <div class="uk-flex-center uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                          <label red><input class="uk-checkbox" type="checkbox"> A0</label>
+                          <label green><input class="uk-checkbox" type="checkbox"> A1</label>
+                          <label blue><input class="uk-checkbox" type="checkbox"> A2</label>
+                      </div>
+           
+                  </fieldset>
                 </div>
             </li>
+            
             <li class="uk-open">
               <a class="uk-accordion-title" href="#">
                 Input
@@ -254,6 +265,7 @@
   <script src="assets/js/ui.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/breadboard.js"></script>
+  <script src="assets/js/input.js"></script>
 
 </body>
 
