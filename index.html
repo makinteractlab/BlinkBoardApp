@@ -183,7 +183,7 @@
           <ul uk-accordion="multiple: true">  
             
             <li class="uk-open">
-                <a class="uk-accordion-title" href="#">
+                <a class="uk-accordion-title uk-text-large" href="#">
                   Input Voltage
                 </a>
                 <div class="uk-accordion-content">
@@ -211,45 +211,40 @@
             </li>
             
             <li class="uk-open">
-              <a class="uk-accordion-title" href="#">
+              <a class="uk-accordion-title uk-text-large" href="#">
                 Output
               </a>
               
               <div class="uk-accordion-content">
                
-                <span class="uk-badge uk-light uk-background-primary">D0: <span class="accent">HIGH</span></span>
-                <fieldset class="uk-fieldset uk-margin-top">
-                    <div class="uk-grid-small uk-grid">
-                      <label><input class="uk-radio" type="radio" name="radio2"> L</label>
-                      <label><input class="uk-radio" type="radio" name="radio2"> H</label>
-                      <label><input class="uk-radio" type="radio" name="radio2"> PWM </label>
-                      <input id='xxx' class="uk-range uk-width-expand" type="range" value="0" min="0" max="100" step="1">
+                
+                <span class="uk-badge uk-width-expand outChannel">D0: <span id="d0status">LOW </span></span>
+                <fieldset class="uk-fieldset uk-margin-small-top">
+                  <div class="uk-grid-small uk-grid">
+                      <label><input id="d0low" class="uk-radio" type="radio" name="d0_radio" checked> LOW</label>
+                      <label><input id="d0high" class="uk-radio" type="radio" name="d0_radio"> HIGH</label>
+                      <label><input id="d0pwm" class="uk-radio" type="radio" name="d0_radio"> PWM </label>
+                      <input id='d0slider' class="uk-range uk-width-expand" type="range" value="0" min="1" max="100" step="1" disabled>
                     </div>
                 </fieldset>
 
-                <hr class="uk-nav-divider"></hr>
+                <hr class="uk-nav-divider uk-margin-bottom"></hr>
 
-                <span class="uk-text-large uk-margin-top uk-badge uk-light uk-background-primary">D1: 100%</span>
-                <fieldset class="uk-fieldset uk-margin-top">
+                <span class="uk-badge uk-width-expand outChannel">D1: <span id="d1status">LOW </span></span>
+                <fieldset class="uk-fieldset uk-margin-small-top">
                   <div class="uk-grid-small uk-grid">
-                    <label><input class="uk-radio" type="radio" name="radio2b"> L</label>
-                    <label><input class="uk-radio" type="radio" name="radio2b"> H</label>
-                    <label><input class="uk-radio" type="radio" name="radio2b"> PWM </label>
-                    <input id='xxx' class="uk-range uk-width-expand" type="range" value="0" min="0" max="100" step="1">
-                  </div>
+                      <label><input id="d1low" class="uk-radio" type="radio" name="d1_radio" checked> LOW</label>
+                      <label><input id="d1high" class="uk-radio" type="radio" name="d1_radio"> HIGH</label>
+                      <label><input id="d1pwm" class="uk-radio" type="radio" name="d1_radio"> PWM </label>
+                      <input id='d1slider' class="uk-range uk-width-expand" type="range" value="0" min="1" max="100" step="1" disabled>
+                    </div>
                 </fieldset>
 
+                <hr class="uk-nav-divider uk-margin-bottom"></hr>
 
-                <hr class="uk-nav-divider"></hr>
-
-                <span class="uk-text-large uk-margin-top uk-badge uk-light uk-background-primary">D2: 0V</span>
-                <fieldset class="uk-fieldset uk-margin-top">
-                  <div class="uk-grid-small uk-grid">
-                    <label><input class="uk-radio" type="radio" name="radio2"> V </label>
-                    <input id='xxx' class="uk-range uk-width-expand" type="range" value="0" min="0" max="100" step="1">
-                  </div>
-                </fieldset>
-
+                <span class="uk-badge uk-width-expand outChannel">D2: <span id="d2status" class="accentBlue">0V </span></span>
+                <input id='d2slider' class="uk-range uk-width-expand uk-margin-small-top"" type="range" value="0" min="0" max="5" step="0.1">
+              
               </div>
           </li>
         </ul>

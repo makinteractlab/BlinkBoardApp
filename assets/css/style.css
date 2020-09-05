@@ -203,7 +203,15 @@ label[blue]
   color: #3e95cd;
 }
 
-.accent{
-  color: #3e95cd;
+.outChannel{
   font-weight: bold;
 }
+
+.accentBlue{
+  color: #3e95cd;
+}
+
+.accentRed{
+  color: #c45850;
+}
+
