@@ -187,26 +187,43 @@
                   Input Voltage
                 </a>
                 <div class="uk-accordion-content">
-                    <canvas id="aChart" width="500" height="300"></canvas>
-                    <fieldset class="uk-fieldset">
+
+                    <!-- <canvas id="aChart" width="500" height="300"> -->
+                      
+                      <div class="container">
+                        <div id="overlay">
+                          <img id="pause" src="assets/images/pause_circle.svg">
+                          <!-- <span class="material-icons">
+                            pause_circle_filled
+                          </span>  -->
+                        </div>
+                        <canvas id="aChart"></canvas>
+                    </div>
+            
+
+                 
+
+                    
+
+                    
+                    <!-- <fieldset class="uk-fieldset">
 
                       <div class="uk-flex-center uk-margin uk-margin-top uk-grid-small uk-child-width-auto uk-grid">
                           <label red><input class="uk-checkbox" type="checkbox"> A0</label>
                           <label green><input class="uk-checkbox" type="checkbox"> A1</label>
                           <label blue><input class="uk-checkbox" type="checkbox"> A2</label>
-                          <!-- <button uk-icon="icon: play-circle"></button> -->
-                          
+
                         <span style="margin-top: -2px" class="material-icons">
                           play_circle_filled
                         </span>
                         <span style="margin-top: -2px" class="material-icons">
                           pause_circle_filled
-                        </span>
-
-
+                        </span> 
                       </div>
            
-                  </fieldset>
+                  </fieldset> -->
+
+
                 </div>
             </li>
             
@@ -301,7 +318,7 @@
   <script src="assets/js/ui.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/breadboard.js"></script>
-  <script src="assets/js/input.js"></script>
+  <script src="assets/js/inoutControls.js"></script>
 
 </body>
 
