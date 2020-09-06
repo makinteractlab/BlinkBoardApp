@@ -4,10 +4,19 @@ var Chart = require('chart.js');
 class InputChart {
     constructor() {
 
+        this.active= true;
 
         $('#aChart').click( () => {
-            console.log("sadf")
+            this.active= false;
+            $('#pauseOverlay').removeAttr('hidden');
+            console.log("click")
         });
+
+        // $('#pauseOverlay').click ( () => 
+        // {
+        //     this.active= true;
+        //     $('#pauseOverlay').hide();
+        // });
 
 
 
@@ -53,6 +62,20 @@ class InputChart {
                     labels: {
                         boxWidth: 10
                     }
+                },
+                scales: {
+                    yAxes: [{
+                        id: 'first-y-axis',
+                        type: 'linear',
+                        gridLines: {
+                            display: false
+                        },
+                        ticks: {
+                            max: 5000,
+                            min: 0,
+                            stepSize: 1000
+                        }
+                    }]
                 }
             }
         });
