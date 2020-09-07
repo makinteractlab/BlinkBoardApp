@@ -45,6 +45,9 @@ $(document).ready(function () {
 
     // Init
     initUI();
+
+    // Input and Output controls
+    initInOutControls();
 });
 
 
@@ -64,6 +67,18 @@ firebase.auth().onAuthStateChanged(function (user) {
         updateUI();
     });
 });
+
+
+
+function initInOutControls()
+{
+    this.inputChart= new InputChart();
+   
+    new OutDigitalChannel(0);
+    new OutDigitalChannel(1);
+    new OutAnalogChannel(2);
+}
+
 
 
 function signOut() {
@@ -338,7 +353,8 @@ function onSerialEvent(msg) {
         showFirmwareVersion(msg.version)
 
     } else {
-        sketch.onSerialEvent(msg); // send the result to sketch
+        // sketch.onSerialEvent(msg); // send the result to sketch
+        this.inputChart.onSerialEvent(msg);
     }
 
     // Update status

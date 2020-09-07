@@ -4,47 +4,83 @@ var Chart = require('chart.js');
 class InputChart {
     constructor() {
 
+        this.rawData= []
+        this.rawData["A0"] = Array(10).fill(0);
+        this.rawData["A1"] = Array(10).fill(0);
+        this.rawData["A2"] = Array(10).fill(0);
+
+        this.refreshRate = 100; // every second
+
         this.active= true;
 
         $('#aChart').click( () => {
             this.active= false;
             $('#pauseOverlay').removeAttr('hidden');
-            console.log("click")
         });
 
-        // $('#pauseOverlay').click ( () => 
-        // {
-        //     this.active= true;
-        //     $('#pauseOverlay').hide();
-        // });
+        $('#pauseOverlay').click ( () => 
+        {
+            this.active= true;
+            $('#pauseOverlay').attr('hidden', 'true');
+        });
+
+
+        $('#a0check').change( () => {
+            if ($('#a0check').is(':checked')){
+                this.addDataset (this.rawData["A0"], "A0", "#c45850");
+            }else{
+                this.removeDataset("A0")
+            }
+            this.chart.update();
+        });
+
+        $('#a1check').change( () => {
+            if ($('#a1check').is(':checked')){
+                this.addDataset (this.rawData["A1"], "A1", "#3cba9f");
+            }else{
+                this.removeDataset("A1")
+            }
+            this.chart.update();
+        });
+
+        $('#a2check').change( () => {
+            if ($('#a2check').is(':checked')){
+                this.addDataset (this.rawData["A2"], "A2", "#3e95cd");
+            }else{
+                this.removeDataset("A2")
+            }
+            this.chart.update();
+        });
 
 
 
-        this.a0Data = [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478];
-        this.a1Data = [282, 350, 411, 502, 2000, 809, 947, 1402, 3700, 5000];
-        this.a2Data = [168, 170, 178, 190, 203, 276, 408, 547, 675, 734];
-        this.labels = [0, 1, 2, 3, 4, 5, 6, 7, 800, 9];
+        setInterval(() => {
+            if (!this.active) return;
+            writeJsonToPort({"cmd": "analogRead", "samples": "10"});
+        }, this.refreshRate);
 
-        new Chart($('#aChart')[0], {
+        
+        // crate the chart
+        this.chart= new Chart($('#aChart')[0], {
             type: 'line',
             data: {
-                labels: this.labels,
+                labels: Array(10).fill(0), // none shown but need for thicks
                 datasets: [{
-                        data: this.a0Data,
+                        data: this.rawData["A0"],
                         label: "A0",
                         borderColor: "#c45850",
                         fill: false,
                         cubicInterpolationMode: 'monotone'
                     },
                     {
-                        data: this.a1Data,
+                        data: this.rawData["A1"],
                         label: "A1",
                         borderColor: "#3cba9f",
                         fill: false,
                         cubicInterpolationMode: 'monotone'
                     },
                     {
-                        data: this.a2Data,
+                        data: this.rawData["A2"],
                         label: "A2",
                         borderColor: "#3e95cd",
                         fill: false,
@@ -55,6 +91,9 @@ class InputChart {
             options: {
                 title: {
                     display: false
+                },
+                animation: {
+                    duration: 0
                 },
                 legend: {
                     display: false,
@@ -75,12 +114,56 @@ class InputChart {
                             min: 0,
                             stepSize: 1000
                         }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            display: false //remove labels
+                        }
                     }]
                 }
             }
         });
 
     }
+
+    addDataset (data, label, color){
+        const dtset = {
+            data: data,  // deep copy
+            label: label,
+            borderColor: color,
+            fill: false,
+            cubicInterpolationMode: 'monotone'
+        }
+        this.chart.data.datasets.push(dtset);
+    }
+
+    removeDataset (label){
+        const ds= this.chart.data.datasets;
+        ds.splice(ds.findIndex(e => e.label === label),1);
+    }
+
+    onSerialEvent(msg){
+        if (msg==undefined) return;
+        if(msg.ack !== "analogRead") return; // not for me
+
+        this.rawData["A0"].shift();
+        this.rawData["A0"].push(msg.A0);
+
+        this.rawData["A1"].shift();
+        this.rawData["A1"].push(msg.A1);
+
+        this.rawData["A2"].shift();
+        this.rawData["A2"].push(msg.A2);
+
+        this.chart.data.datasets.forEach((dataset) => {
+            dataset.data = [...this.rawData[dataset.label]];
+          });
+
+        this.chart.update();
+    }
+
+  
+
 }
 
 
@@ -194,13 +277,3 @@ class OutAnalogChannel {
 
 
 
-$(document).ready(function () {
-
-    new InputChart();
-   
-    new OutDigitalChannel(0);
-    new OutDigitalChannel(1);
-    new OutAnalogChannel(2);
-
-
-});

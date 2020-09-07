@@ -190,7 +190,7 @@
 
 
                 <div class="container uk-container">
-                  <div class="uk-position-cover uk-overlay uk-overlay-default uk-flex uk-flex-center uk-flex-middle">
+                  <div id="pauseOverlay" class="uk-position-cover uk-overlay uk-overlay-default uk-flex uk-flex-center uk-flex-middle" hidden>
                     <span class="material-icons md-70 md-dark">
                       pause_circle_filled
                     </span>
@@ -201,9 +201,9 @@
 
                 <fieldset class="uk-fieldset">
                   <div class="uk-flex-center uk-margin uk-margin-top uk-grid-small uk-child-width-auto uk-grid">
-                    <label red><input id="a0check" class="uk-checkbox" type="checkbox"> A0</label>
-                    <label green><input id="a1check" class="uk-checkbox" type="checkbox"> A1</label>
-                    <label blue><input id="a2check" class="uk-checkbox" type="checkbox"> A2</label>
+                    <label red><input id="a0check" class="uk-checkbox" type="checkbox" checked> A0</label>
+                    <label green><input id="a1check" class="uk-checkbox" type="checkbox" checked> A1</label>
+                    <label blue><input id="a2check" class="uk-checkbox" type="checkbox" checked> A2</label>
                 </fieldset>
 
 
@@ -248,8 +248,9 @@
 
                 <span class="uk-badge uk-width-expand outChannel">D2: <span id="d2status" class="accentBlue">0V
                   </span></span>
-                <input id='d2slider' class="uk-range uk-width-expand uk-margin-small-top"" type=" range" value="0"
-                  min="0" max="5" step="0.1">
+                <input id='d2slider' class="uk-range uk-width-expand" type="range" value="0" min="0" max="5"
+                step="0.1" >
+
 
               </div>
             </li>

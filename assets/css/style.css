@@ -192,6 +192,9 @@ a,
   position: relative;
 }
 
+#pauseOverlay{
+  opacity: 0.2;
+}
 
 /* Rules for sizing the icon. */
 .material-icons.md-18 { font-size: 18px; }
