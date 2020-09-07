@@ -115,6 +115,9 @@ const sketch = new p5(p => {
       this.onBlinkSlow = false;
       this.onBlinkFast = false;
 
+      this.serialMsDelay = 2; // tiny delay needed for making serial work
+
+
       this.img = p.loadImage("assets/images/breadboard.svg", (img) => {
         this.scale = params.breadBoardSize / img.width;
         this.width = params.breadBoardSize;
@@ -123,7 +126,7 @@ const sketch = new p5(p => {
       });
 
       // create leds on rows
-      this.createLeds (params)
+      this.createLeds(params)
 
       // Blink slow
       setInterval(() => {
@@ -139,7 +142,7 @@ const sketch = new p5(p => {
     }
 
 
-    createLeds (params){
+    createLeds(params) {
 
       const ledParams = params.led;
 
@@ -166,14 +169,14 @@ const sketch = new p5(p => {
         params.ledVccCoord.x,
         params.ledVccCoord.y,
         true,
-        params.led.rowLength*2,
+        params.led.rowLength * 2,
         ledParams));
 
       this.leds.push(new BreadBoard.Led("gnd",
         params.ledVccCoord.x,
         params.ledVccCoord.y + params.rowGap,
         true,
-        params.led.rowLength*2,
+        params.led.rowLength * 2,
         ledParams));
     }
 
@@ -293,9 +296,10 @@ const sketch = new p5(p => {
       }
     }
     set json(src) {
-      this.onLeds = src.on;
-      this.slowLeds = src.slow;
-      this.fastLeds = src.fast;
+      // make sure not to assign undefined
+      if (src.on) this.onLeds = src.on;
+      if (src.slow) this.slowLeds = src.slow;
+      if (src.fast) this.fastLeds = src.fast;
 
       // update hardware
       this.sendToHardware(this.onLeds)
@@ -304,18 +308,29 @@ const sketch = new p5(p => {
     }
 
     sendToHardware(leds) {
-      leds.forEach(led => {
-
-        // handle special cases
-        let cmd = undefined;
-        if (isNaN(led.id)){
-          cmd= {"cmd": "setCmdLed", "led": led.id, "pattern": led.state};
-        }else{
-          // all other leds
-          cmd = {cmd: "setLed", "led": led.id, "pattern": led.state};
+      // use async due to necessary delay in serial
+      (async () => {
+        for (let led of leds) {
+          let cmd = undefined;
+          if (isNaN(led.id)) {
+            cmd = {
+              "cmd": "setCmdLed",
+              "led": led.id,
+              "pattern": led.state
+            };
+          } else {
+            // all other leds
+            cmd = {
+              cmd: "setLed",
+              "led": led.id,
+              "pattern": led.state
+            };
+          }
+          writeJsonToPort(cmd);
+          await Util.sleep(this.serialMsDelay);
         }
-        writeJsonToPort(cmd);
-      });
+      })();  // execute!
+
     }
   }
 
@@ -351,6 +366,12 @@ const sketch = new p5(p => {
     get clearButton() {
       return $('#clearTool');
     }
+    get saveButton() {
+      return $('#saveTool');
+    }
+    get fetchButton() {
+      return $('#fetchTool');
+    }
 
     select(id) {
       $(`#${id}`).addClass('menuBarToggleOn');
@@ -381,6 +402,14 @@ const sketch = new p5(p => {
     this.tools = new ToolBar();
 
     this.tools.clearButton.click(() => this.bb.clear());
+    this.tools.saveButton.click(() => {
+      console.log(this.bb.json)
+      saveBreadboard(this.bb.json)
+    });
+    this.tools.fetchButton.click(() => {
+      this.bb.clear();
+      fetchBreadboardOnceAndUpdate(this.bb)
+    });
   };
 
   p.draw = () => {
@@ -401,8 +430,7 @@ const sketch = new p5(p => {
   }
 
   p.keyPressed = () => {
-    // let src = JSON.parse('{"on":[2,3,5],"slow":[27,28],"fast":[1,26,4,43,25,50]}');
-    // this.bb.json = src;
+    if (p.keyCode === p.ESCAPE) this.tools.deselectAll()
   }
 
 

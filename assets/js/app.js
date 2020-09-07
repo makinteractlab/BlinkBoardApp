@@ -93,6 +93,19 @@ function updateUserData() {
     firebase.database().ref('users/' + theUser.uid).update(theUser.userData);
 }
 
+function saveBreadboard(breadboardData) {
+    firebase.database().ref('users/' + theUser.uid).update({breadboard: breadboardData});
+}
+
+function fetchBreadboardOnceAndUpdate(breadboard){
+    firebase.database().ref('/users/' + theUser.uid).once('value').then(function (snapshot) {
+        
+        const userData= snapshot.val();
+        console.log(userData.breadboard)
+        breadboard.json= userData.breadboard;
+    });
+}
+
 
 function initConnection(ready, callback) {
     setConnectionStatus(ready);
@@ -362,6 +375,9 @@ function onSerialEvent(msg) {
     setStatusOutput(JSON.stringify(msg))
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function writeJsonToPort(json) {
     if (!port) return;

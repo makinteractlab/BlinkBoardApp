@@ -68,6 +68,10 @@ module.exports = {
             event.preventDefault();
             shell.openExternal(this.href);
         });
+    },
+
+    sleep: function(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
 };
