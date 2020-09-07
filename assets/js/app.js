@@ -93,7 +93,7 @@ function updateUserData() {
     firebase.database().ref('users/' + theUser.uid).update(theUser.userData);
 }
 
-function saveBreadboard(breadboardData) {
+function saveBreadboardData(breadboardData) {
     firebase.database().ref(`users/${theUser.uid}/breadboard`).update(breadboardData);
 }
 

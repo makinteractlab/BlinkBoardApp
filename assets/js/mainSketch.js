@@ -416,8 +416,9 @@ const sketch = new p5(p => {
     this.tools.fetchButton.click(() => {
       
       onBreadboardDataChange( (data) => {
+        if (data===null) return; // no data online
         if (!this.tools.isFetchActive()) return; // no need to update
-        this.bb.clear();
+        this.bb.clear(); // clear before updating
         setTimeout( () => this.bb.json= data, 100); // wait before update
       });
     });
