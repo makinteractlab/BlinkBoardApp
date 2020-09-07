@@ -29,8 +29,8 @@ const sketch = new p5(p => {
 
   class BreadBoard {
 
-    static Led = class {
 
+    static Led = class {
       // in BreadBoard coordinate
       constructor(id, x, y, left, params) {
         this.id = id;
@@ -97,6 +97,7 @@ const sketch = new p5(p => {
       }
 
     }
+
 
     // Breadboard
     constructor(x, y, params) {
@@ -225,16 +226,21 @@ const sketch = new p5(p => {
       if (m.y < 0 || m.y > this.img.height) return false;
 
       // If clicked callabck
+      this.leds.forEach(led => led.mouseMoved(m));
       this.leds.forEach(led => led.mousePressed(m, led => {
 
-        // TO CHANGE ---
-        led.state = LedState.ON;
+      // get current tool and choose what to do
+      switch(tools.getCurrentTool()){
+          case "offTool": led.state = LedState.OFF; break;
+          case "onTool": led.state = LedState.ON; break;
+          case "slowTool": led.state = LedState.SLOW; break;
+          case "fastTool": led.state = LedState.FAST; break;
+          default: return;
+        }
         this.sendToHardware([led]);
-        // --- TO CHANGE
       }));
 
       // the user clicked on the breadbaord
-
       return true;
     }
 
@@ -271,49 +277,47 @@ const sketch = new p5(p => {
 
   class ToolBar {
 
-/*    static Tool = class {
-      constructor(id, cmd, toggle = false) {
-        this.id = id;
-        this.cmd = cmd;
-        this.toggle = toggle;
-        this.active = false;
-
-        
-
-      }
-
-      get toolName() {
-        return this.id;
-      }
-
-      select(){
-        $(this.id).addClass('menuBarToggleOn');
-      }
-      deselect(){
-        $(this.id).removeClass('menuBarToggleOn');
-      }
-
-
-    }*/
-
     constructor() {
       
-      $('.tool').on('click', function() {
-        console.log(this.id)
+      this.deselectAll();
+      
+      const tb= this;
+      $('.toggleTool').click( function(){
+        if (this.id == tb.current){
+          tb.deselect(this.id)
+        }else{
+          tb.deselectAll();
+          tb.select(this.id)
+        }
+      });
 
+      $('.clickTool').click( () => this.deselectAll());
+
+      // right click to unselect
+      $(window).contextmenu( () => {
+        this.deselectAll();
       });
 
     }
 
+    getCurrentTool(){
+      return this.current;
+    }
+    get clearButton(){
+      return $('#clearTool');
+    }
     
     select(id){
-      $(id).addClass('menuBarToggleOn');
+      $(`#${id}`).addClass('menuBarToggleOn');
+      this.current= id;
     }
     deselect(id){
-      $(id).removeClass('menuBarToggleOn');
+      $(`#${id}`).removeClass('menuBarToggleOn');
+      this.current= undefined;
     }
     deselectAll(){
       $('.menuBarToggleOn').removeClass('menuBarToggleOn');
+      this.current = undefined;
     }
 
 
@@ -329,7 +333,9 @@ const sketch = new p5(p => {
     // canvas size is specified in the CSS file (size of div #one)
     p.createCanvas($("#mainSketch").width(), $("#mainSketch").height());
     this.bb = new BreadBoard(p.width / 2, p.height / 2, breadboardParams);
-    this.tools = new ToolBar()
+    this.tools = new ToolBar();
+    
+    this.tools.clearButton.click( () => this.bb.clear());
   };
 
   p.draw = () => {
@@ -339,7 +345,10 @@ const sketch = new p5(p => {
 
   p.mousePressed = () => {
     this.bb.mousePressed();
+  }
 
+  p.mouseDragged = () =>{
+    this.bb.mousePressed();
   }
 
   p.mouseMoved = () => {
@@ -360,72 +369,3 @@ const sketch = new p5(p => {
 
 
 }, 'mainSketch');
-
-
-/*
-
-// Menu bar with toggles setup
-$('.menuBarToggle').on('click', function () {
-
-  const prev = $('.menuBarToggleOn')[0];
-  deselectAllToggles();
-
-  // get name
-  const name = $(this).find('span').text();
-
-  switch (name) {
-    case 'On':
-      sketch.setTool('on');
-      break;
-    case 'Off':
-      sketch.setTool('off');
-      break;
-    case 'Slow':
-      sketch.setTool('blink2');
-      break;
-    case 'Fast':
-      sketch.setTool('blink');
-      break;
-  }
-
-
-  // check myself
-  if (prev == this) return;
-  this.classList.add('menuBarToggleOn');
-});
-
-
-
-*/
-
-
-
-// const sketch2 = new p5(p => {
-//   p.setup = () => {
-//     // canvas size is specified in the CSS file (size of div #one)
-//     p.createCanvas(300, 200);
-//   };
-
-//   p.draw = () => {
-//     p.background(255,0,0);
-//   };
-// }, 'test1');
-
-
-
-// const sketch3 = new p5(p => {
-//   p.setup = () => {
-//     // canvas size is specified in the CSS file (size of div #one)
-//     p.createCanvas(300, 200);
-//   };
-
-//   p.draw = () => {
-//     p.background(255);
-//     p.fill(0);
-//     p.ellipse(p.mouseX, p.mouseY, 10, 10)
-//   };
-// }, 'test2');
-
-
-
-

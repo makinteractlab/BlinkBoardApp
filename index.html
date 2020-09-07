@@ -115,61 +115,52 @@
 
     <!-- Sketch -->
     <div id="mainSketch" class="uk-container">
-      <nav class="menuBar uk-navbar uk-position-top">
 
+      <!-- Toolbar -->
+      <nav class="menuBar uk-navbar uk-position-top">
         <div id="toolbar" class="uk-navbar-center uk-width-auto uk-light uk-background-primary">
 
-          <a id="offTool" class="uk-navbar-toggle tool menuBarToggle">
+          <a id="offTool" class="uk-navbar-toggle toggleTool">
             <span>Off</span>
-            <i class="material-icons md-24">panorama_fish_eye
-            </i>
+            <i class="material-icons md-24">panorama_fish_eye</i>
           </a>
-
-          <a class="uk-navbar-toggle tool menuBarToggle">
+          <a id="onTool" class="uk-navbar-toggle toggleTool">
             <span>On</span>
             <i class="material-icons md-24">flare</i>
           </a>
-
-          <a class="uk-navbar-toggle menuBarToggle">
+          <a id="slowTool" class="uk-navbar-toggle toggleTool">
             <span>Slow</span>
             <i class="material-icons md-24">fiber_smart_record</i>
           </a>
-
-          <a class="uk-navbar-toggle menuBarToggle">
+          <a id="fastTool" class="uk-navbar-toggle toggleTool">
             <span>Fast</span>
             <i class="material-icons md-24">hdr_strong</i>
           </a>
-
-
-          <a class="uk-navbar-toggle" href="javascript:sketch.clear()">
+          <a id="clearTool" class="uk-navbar-toggle clickTool">
             <span>Clear</span>
             <i class="material-icons md-24">delete</i>
           </a>
 
           <hr class="uk-divider-vertical">
 
-          <a class="uk-navbar-toggle menuBarToggle">
+          <a class="uk-navbar-toggle">
+            <span>Save</span>
+            <i class="material-icons md-24">cloud_upload</i>
+          </a>
+          <a class="uk-navbar-toggle">
             <span>Fetch</span>
             <i class="material-icons md-24">cloud_download</i>
           </a>
 
-          <a class="uk-navbar-toggle menuBarToggle">
-            <span>Upload</span>
-            <i class="material-icons md-24">cloud_upload</i>
-          </a>
-
           <hr class="uk-divider-vertical">
 
-          <a class="uk-navbar-toggle menuBarToggle">
+          <a class="uk-navbar-toggle">
             <span>Tools</span>
             <i class="material-icons md-24" uk-toggle="target: #toolSideBar">view_sidebar</i>
-
           </a>
 
         </div>
-
       </nav>
-
     </div>
 
 
@@ -188,9 +179,10 @@
               </a>
               <div class="uk-accordion-content">
 
-
                 <div class="container uk-container">
-                  <div id="pauseOverlay" class="uk-position-cover uk-overlay uk-overlay-default uk-flex uk-flex-center uk-flex-middle" hidden>
+                  <div id="pauseOverlay"
+                    class="uk-position-cover uk-overlay uk-overlay-default uk-flex uk-flex-center uk-flex-middle"
+                    hidden>
                     <span class="material-icons md-70 md-dark">
                       pause_circle_filled
                     </span>
@@ -198,14 +190,12 @@
                   <canvas id="aChart" width="500" height="300"></canvas>
                 </div>
 
-
                 <fieldset class="uk-fieldset">
                   <div class="uk-flex-center uk-margin uk-margin-top uk-grid-small uk-child-width-auto uk-grid">
                     <label red><input id="a0check" class="uk-checkbox" type="checkbox" checked> A0</label>
                     <label green><input id="a1check" class="uk-checkbox" type="checkbox" checked> A1</label>
                     <label blue><input id="a2check" class="uk-checkbox" type="checkbox" checked> A2</label>
                 </fieldset>
-
 
               </div>
             </li>
@@ -216,7 +206,6 @@
               </a>
 
               <div class="uk-accordion-content">
-
 
                 <span class="uk-badge uk-width-expand outChannel">D0: <span id="d0status">LOW </span></span>
                 <fieldset class="uk-fieldset uk-margin-small-top">
@@ -248,14 +237,11 @@
 
                 <span class="uk-badge uk-width-expand outChannel">D2: <span id="d2status" class="accentBlue">0V
                   </span></span>
-                <input id='d2slider' class="uk-range uk-width-expand" type="range" value="0" min="0" max="5"
-                step="0.1" >
-
+                <input id='d2slider' class="uk-range uk-width-expand" type="range" value="0" min="0" max="5" step="0.1">
 
               </div>
             </li>
           </ul>
-
 
         </ul>
       </div>
@@ -307,7 +293,7 @@
   <!-- JS -->
   <script src="assets/js/ui.js"></script>
   <script src="assets/js/app.js"></script>
-  <script src="assets/js/breadboard.js"></script>
+  <script src="assets/js/mainSketch.js"></script>
   <script src="assets/js/inoutControls.js"></script>
 
 </body>

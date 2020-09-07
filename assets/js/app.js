@@ -72,7 +72,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 function initInOutControls()
 {
-    this.inputChart= new InputChart(100); // update every 10th of second
+    inputChart= new InputChart(100); // update every 10th of second
    
     new OutDigitalChannel(0);
     new OutDigitalChannel(1);
@@ -354,7 +354,7 @@ function onSerialEvent(msg) {
 
     } else {
         // sketch.onSerialEvent(msg); // send the result to sketch
-        this.inputChart.onSerialEvent(msg);
+        inputChart && inputChart.onSerialEvent(msg);
     }
 
     // Update status

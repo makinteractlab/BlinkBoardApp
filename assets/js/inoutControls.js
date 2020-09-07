@@ -1,5 +1,7 @@
 var Chart = require('chart.js');
 
+let inputChart; // global can be accessed in app.js
+
 
 class InputChart {
     constructor(refreshRate) {
@@ -23,7 +25,6 @@ class InputChart {
             this.active= true;
             $('#pauseOverlay').attr('hidden', 'true');
         });
-
 
         $('#a0check').change( () => {
             if ($('#a0check').is(':checked')){
@@ -53,7 +54,7 @@ class InputChart {
         });
 
 
-
+        // Sample analog channel
         setInterval(() => {
             if (!this.active) return;
             writeJsonToPort({"cmd": "analogRead", "samples": "10"});
@@ -143,8 +144,8 @@ class InputChart {
     }
 
     onSerialEvent(msg){
-        if (msg==undefined) return;
-        if(msg.ack !== "analogRead") return; // not for me
+        if (msg==undefined) return false;
+        if(msg.ack !== "analogRead") return false; // not for me
 
         this.rawData["A0"].shift();
         this.rawData["A0"].push(msg.A0);
@@ -160,6 +161,7 @@ class InputChart {
           });
 
         this.chart.update();
+        return true;
     }
 
   
