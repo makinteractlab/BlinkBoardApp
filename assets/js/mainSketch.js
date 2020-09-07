@@ -13,8 +13,12 @@ const breadboardParams = {
     size: 40,
     slowBlinkSpeed: 400,
     fastBlinkSpeed: 200,
-    rowLength: 8
-  }
+    rowLength: 7
+  },
+  ledVccCoord: {
+    x: 51,
+    y: 50
+  },
 }
 
 const LedState = {
@@ -32,7 +36,7 @@ const sketch = new p5(p => {
 
     static Led = class {
       // in BreadBoard coordinate
-      constructor(id, x, y, left, params) {
+      constructor(id, x, y, left, rowLength, params) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -42,6 +46,7 @@ const sketch = new p5(p => {
         this.visibility = true;
         this.over = false;
         this.left = left;
+        this.rowLength = rowLength;
       }
 
       draw() {
@@ -54,12 +59,12 @@ const sketch = new p5(p => {
 
           if (this.left) {
             p.translate(this.x - this.sz / 2, this.y - this.sz / 2);
-            p.rect(0, 0, this.sz * this.params.rowLength, this.sz);
+            p.rect(0, 0, this.sz * this.rowLength, this.sz);
 
           } else {
             p.translate(this.x + this.sz, this.y + this.sz / 2);
             p.rotate(p.PI);
-            p.rect(0, 0, this.sz * this.params.rowLength, this.sz);
+            p.rect(0, 0, this.sz * this.rowLength, this.sz);
           }
           p.pop();
         }
@@ -117,7 +122,25 @@ const sketch = new p5(p => {
         this.ready = true;
       });
 
-      // create leds
+      // create leds on rows
+      this.createLeds (params)
+
+      // Blink slow
+      setInterval(() => {
+        this.slowLeds.forEach(led => led.visible = this.onBlinkSlow);
+        this.onBlinkSlow = !this.onBlinkSlow;
+      }, params.led.slowBlinkSpeed);
+
+      // Blink fast
+      setInterval(() => {
+        this.fastLeds.forEach(led => led.visible = this.onBlinkFast);
+        this.onBlinkFast = !this.onBlinkFast;
+      }, params.led.fastBlinkSpeed);
+    }
+
+
+    createLeds (params){
+
       const ledParams = params.led;
 
       for (let i = 0; i < params.rows; i++) {
@@ -126,30 +149,35 @@ const sketch = new p5(p => {
           params.ledOneCoord.x,
           params.ledOneCoord.y + params.rowGap * i,
           true, //left
+          params.led.rowLength, // 7
           ledParams));
         // right side
         this.leds.push(new BreadBoard.Led(i + params.rows + 1,
           params.ledOneCoord.x + params.colGap,
           params.ledOneCoord.y + params.rowGap * i,
           false, //rigth
+          params.led.rowLength, // 7
           ledParams));
       }
 
+      // crate special leds (VCC and GND)
+      // extend the row for vcc and gnd
+      this.leds.push(new BreadBoard.Led("vcc",
+        params.ledVccCoord.x,
+        params.ledVccCoord.y,
+        true,
+        params.led.rowLength*2,
+        ledParams));
 
-      // Blink slow
-      setInterval(() => {
-        this.slowLeds.forEach(led => led.visible = this.onBlinkSlow);
-        this.onBlinkSlow = !this.onBlinkSlow;
-      }, ledParams.slowBlinkSpeed);
-
-      // Blink fast
-      setInterval(() => {
-        this.fastLeds.forEach(led => led.visible = this.onBlinkFast);
-        this.onBlinkFast = !this.onBlinkFast;
-      }, ledParams.fastBlinkSpeed);
-
-
+      this.leds.push(new BreadBoard.Led("gnd",
+        params.ledVccCoord.x,
+        params.ledVccCoord.y + params.rowGap,
+        true,
+        params.led.rowLength*2,
+        ledParams));
     }
+
+
 
     setLed(ledId, state) {
       this.leds.filter(l => l.id == ledId).map(l => l.state = state)
@@ -193,6 +221,10 @@ const sketch = new p5(p => {
       p.translate(this.x - this.width / 2, this.y - this.height / 2);
       p.scale(this.scale);
 
+      // BG
+      p.fill(200);
+      p.rect(0, 0, this.img.width, this.img.height);
+
       // Draw leds
       this.leds.forEach(led => led.draw())
 
@@ -229,13 +261,22 @@ const sketch = new p5(p => {
       this.leds.forEach(led => led.mouseMoved(m));
       this.leds.forEach(led => led.mousePressed(m, led => {
 
-      // get current tool and choose what to do
-      switch(tools.getCurrentTool()){
-          case "offTool": led.state = LedState.OFF; break;
-          case "onTool": led.state = LedState.ON; break;
-          case "slowTool": led.state = LedState.SLOW; break;
-          case "fastTool": led.state = LedState.FAST; break;
-          default: return;
+        // get current tool and choose what to do
+        switch (tools.getCurrentTool()) {
+          case "offTool":
+            led.state = LedState.OFF;
+            break;
+          case "onTool":
+            led.state = LedState.ON;
+            break;
+          case "slowTool":
+            led.state = LedState.SLOW;
+            break;
+          case "fastTool":
+            led.state = LedState.FAST;
+            break;
+          default:
+            return;
         }
         this.sendToHardware([led]);
       }));
@@ -264,11 +305,15 @@ const sketch = new p5(p => {
 
     sendToHardware(leds) {
       leds.forEach(led => {
-        const cmd = {
-          cmd: "setLed",
-          "led": led.id,
-          "pattern": led.state
-        };
+
+        // handle special cases
+        let cmd = undefined;
+        if (isNaN(led.id)){
+          cmd= {"cmd": "setCmdLed", "led": led.id, "pattern": led.state};
+        }else{
+          // all other leds
+          cmd = {cmd: "setLed", "led": led.id, "pattern": led.state};
+        }
         writeJsonToPort(cmd);
       });
     }
@@ -278,44 +323,44 @@ const sketch = new p5(p => {
   class ToolBar {
 
     constructor() {
-      
+
       this.deselectAll();
-      
-      const tb= this;
-      $('.toggleTool').click( function(){
-        if (this.id == tb.current){
+
+      const tb = this;
+      $('.toggleTool').click(function () {
+        if (this.id == tb.current) {
           tb.deselect(this.id)
-        }else{
+        } else {
           tb.deselectAll();
           tb.select(this.id)
         }
       });
 
-      $('.clickTool').click( () => this.deselectAll());
+      $('.clickTool').click(() => this.deselectAll());
 
       // right click to unselect
-      $(window).contextmenu( () => {
+      $(window).contextmenu(() => {
         this.deselectAll();
       });
 
     }
 
-    getCurrentTool(){
+    getCurrentTool() {
       return this.current;
     }
-    get clearButton(){
+    get clearButton() {
       return $('#clearTool');
     }
-    
-    select(id){
+
+    select(id) {
       $(`#${id}`).addClass('menuBarToggleOn');
-      this.current= id;
+      this.current = id;
     }
-    deselect(id){
+    deselect(id) {
       $(`#${id}`).removeClass('menuBarToggleOn');
-      this.current= undefined;
+      this.current = undefined;
     }
-    deselectAll(){
+    deselectAll() {
       $('.menuBarToggleOn').removeClass('menuBarToggleOn');
       this.current = undefined;
     }
@@ -334,8 +379,8 @@ const sketch = new p5(p => {
     p.createCanvas($("#mainSketch").width(), $("#mainSketch").height());
     this.bb = new BreadBoard(p.width / 2, p.height / 2, breadboardParams);
     this.tools = new ToolBar();
-    
-    this.tools.clearButton.click( () => this.bb.clear());
+
+    this.tools.clearButton.click(() => this.bb.clear());
   };
 
   p.draw = () => {
@@ -347,7 +392,7 @@ const sketch = new p5(p => {
     this.bb.mousePressed();
   }
 
-  p.mouseDragged = () =>{
+  p.mouseDragged = () => {
     this.bb.mousePressed();
   }
 
@@ -356,15 +401,14 @@ const sketch = new p5(p => {
   }
 
   p.keyPressed = () => {
-    let src = JSON.parse('{"on":[2,3,5],"slow":[27,28],"fast":[1,26,4,43,25,50]}');
-    this.bb.json = src;
+    // let src = JSON.parse('{"on":[2,3,5],"slow":[27,28],"fast":[1,26,4,43,25,50]}');
+    // this.bb.json = src;
   }
 
 
   p.onSerialEvent = (msg) => {
     Util.log(`${JSON.stringify(msg)}`, "Sketch");
   }
-
 
 
 

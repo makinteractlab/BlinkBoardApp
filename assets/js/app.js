@@ -47,7 +47,8 @@ $(document).ready(function () {
     initUI();
 
     // Input and Output controls
-    initInOutControls();
+    // --CHANGE
+    // initInOutControls();
 });
 
 
