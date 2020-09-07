@@ -2,14 +2,14 @@ var Chart = require('chart.js');
 
 
 class InputChart {
-    constructor() {
+    constructor(refreshRate) {
 
         this.rawData= []
         this.rawData["A0"] = Array(10).fill(0);
         this.rawData["A1"] = Array(10).fill(0);
         this.rawData["A2"] = Array(10).fill(0);
 
-        this.refreshRate = 100; // every second
+        this.refreshRate = refreshRate; // every 10th of second
 
         this.active= true;
 
