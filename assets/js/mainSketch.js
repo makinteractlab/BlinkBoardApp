@@ -372,6 +372,10 @@ const sketch = new p5(p => {
     get fetchButton() {
       return $('#fetchTool');
     }
+    isFetchActive(){
+      return this.current === "fetchTool";
+    }
+
 
     select(id) {
       $(`#${id}`).addClass('menuBarToggleOn');
@@ -402,13 +406,20 @@ const sketch = new p5(p => {
     this.tools = new ToolBar();
 
     this.tools.clearButton.click(() => this.bb.clear());
+    
     this.tools.saveButton.click(() => {
-      console.log(this.bb.json)
-      saveBreadboard(this.bb.json)
+      if (this.bb.json !== null)
+        saveBreadboard(this.bb.json)
     });
+
+
     this.tools.fetchButton.click(() => {
-      this.bb.clear();
-      fetchBreadboardOnceAndUpdate(this.bb)
+      
+      onBreadboardDataChange( (data) => {
+        if (!this.tools.isFetchActive()) return; // no need to update
+        this.bb.clear();
+        setTimeout( () => this.bb.json= data, 100); // wait before update
+      });
     });
   };
 
