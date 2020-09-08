@@ -90,9 +90,12 @@
       <div class="uk-active uk-container-expand uk-position-bottom uk-margin-left">
         <a href="https://en.gravatar.com"><img class="avatar" alt="avatar" src="" /></a>
         <div class="profile">
-          <h5 id="name">Name user</h5>
+          <h5>
+            <span id="name">Name user</span>
+            <i id="adminBadge" class="admin material-icons md-24 uk-margin-small-left">admin_panel_settings</i>
+          </h5>
           <p id="email">email@email.com</p>
-          <p id="role">User</p>
+          <p>Channel: <u id="channel">ID</u></p>
         </div>
       </div>
 
@@ -143,7 +146,7 @@
 
           <hr class="uk-divider-vertical">
 
-          <a id="saveTool" class="uk-navbar-toggle clickTool">
+          <a id="saveTool" class="uk-navbar-toggle clickTool admin" hidden>
             <span>Save</span>
             <i class="material-icons md-24">cloud_upload</i>
           </a>

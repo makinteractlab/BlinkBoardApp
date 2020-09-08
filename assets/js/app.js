@@ -12,6 +12,7 @@ const {
 const {
     timeStamp
 } = require('console');
+const { isatty } = require('tty');
 
 
 // Globals
@@ -64,11 +65,28 @@ firebase.auth().onAuthStateChanged(function (user) {
     firebase.database().ref('/users/' + user.uid).once('value').then(function (snapshot) {
         theUser.uid = user.uid;
         theUser.userData = snapshot.val();
-
-        updateUI();
+    }).then( () => {
+        // Refresh if admin privileges
+        checkAdminPrivileges().then( x => {
+            theUser.userData.admin= x 
+        }).then(()=>{
+            updateUserData(); 
+            updateUI();
+        });
     });
 });
 
+function checkAdminPrivileges()
+{
+    return firebase.database().ref('/admins/').once('value').then(function (snapshot) {
+        const admins= snapshot.val();
+        return theUser.uid in admins;
+    }); 
+}
+
+function isAdmin(){
+    return theUser.userData.admin;
+}
 
 
 function initInOutControls()
@@ -94,18 +112,12 @@ function updateUserData() {
 }
 
 function saveBreadboardData(breadboardData) {
-    firebase.database().ref(`users/${theUser.uid}/breadboard`).update(breadboardData);
-}
-
-function fetchBreadboardOnceAndUpdate(breadboard){
-    firebase.database().ref(`users/${theUser.uid}/breadboard`).once('value').then(function (snapshot) {
-        breadboard.json= snapshot.val();
-    });
+    firebase.database().ref(`channels/${theUser.userData.channel}/breadboard`).update(breadboardData);
 }
 
 // Keep listenting to changes
 function onBreadboardDataChange (callback){
-    const breadboardUpdate = firebase.database().ref(`/users/${theUser.uid}/breadboard`);
+    const breadboardUpdate = firebase.database().ref(`/channels/${theUser.userData.channel}/breadboard`);
     breadboardUpdate.on('value', function(snapshot) {
         callback(snapshot.val());
     });
@@ -187,12 +199,19 @@ function updateUI() {
     // Sidebar
     $('#name').text(theUser.userData.name);
     $('#email').text(theUser.userData.email);
-    $('#role').text(theUser.userData.role);
+    $('#channel').text(theUser.userData.channel);
+
     const avatarImg = theUser.userData.avatar + '?s=200'; // size 200
     $('.avatar').attr("src", avatarImg)
 
     // Settings from recorded values
     $('#brightnessRange').val(theUser.userData.settings.lightBg);
+
+    // Show admin controls and badge
+    if (isAdmin()) 
+    {
+        $('.admin').removeAttr('hidden');
+    }
 
     // Status bar
     if (theUser.userData.settings.debugging) showStatusBar()

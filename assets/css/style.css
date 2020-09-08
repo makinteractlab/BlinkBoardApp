@@ -72,6 +72,12 @@ a,
   display: none;
 }
 
+#adminBadge
+{
+  position: absolute;
+  color: gold;
+}
+
 
 .spinner {
   position: absolute;

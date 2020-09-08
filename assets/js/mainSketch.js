@@ -409,7 +409,7 @@ const sketch = new p5(p => {
     
     this.tools.saveButton.click(() => {
       if (this.bb.json !== null)
-        saveBreadboard(this.bb.json)
+        saveBreadboardData(this.bb.json)
     });
 
 

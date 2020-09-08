@@ -55,7 +55,7 @@ firebase.auth().onAuthStateChanged(function (user) {
                     name: user.uid,
                     email: user.email,
                     avatar: "https://gravatar.com/avatar/" + Util.md5(user.email),
-                    role: "User",
+                    channel: "ID220",
                     settings: {
                         port: "",
                         lightBg: 20,
