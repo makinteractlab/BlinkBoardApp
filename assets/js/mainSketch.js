@@ -121,7 +121,7 @@ const sketch = new p5(p => {
       this.onBlinkSlow = false;
       this.onBlinkFast = false;
 
-      this.serialMsDelay = 2; // tiny delay needed for making serial work
+      this.serialMsDelay = 10; // tiny delay needed for making serial work
 
 
       this.img = p.loadImage("assets/images/breadboard.svg", (img) => {
@@ -470,7 +470,7 @@ const sketch = new p5(p => {
         if (!this.tools.isFetchActive()) return; // no need to update
         this.bb.clear(); // clear before updating
         if (data === null) return; // no online data
-        setTimeout(() => this.bb.json = data, 200); // wait before update
+        setTimeout(() => this.bb.json = data, 100); // wait before update
       });
     });
   };
