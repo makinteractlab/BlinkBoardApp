@@ -440,7 +440,7 @@ function getFirmwareVersion() {
 }
 
 function showFirmwareVersion(v) {
-    UI.modalAlertWindow('Firmware', `The current software version is ${Util.getCurrentAppVersion()} and the firmware version is ${v}.`);
+    UI.modalAlertWindow('Software version', `The current software version is ${Util.getCurrentAppVersion()} and the firmware version is ${v}.`);
 }
 
 

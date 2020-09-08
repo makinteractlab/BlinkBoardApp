@@ -13,10 +13,10 @@ const breadboardParams = {
     size: 27,
     slowBlinkSpeed: 400,
     fastBlinkSpeed: 200,
-    rowLength: 7
+    rowLength: 9
   },
   ledVccCoord: {
-    x: 51,
+    x: 53,
     y: 50
   },
   sideCoord: {

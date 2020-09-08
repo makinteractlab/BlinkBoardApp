@@ -76,10 +76,15 @@ a,
 #adminBadge
 {
   position: absolute;
+  margin-top: 30px;
   margin-left: 35px;
   color: gold;
 }
 
+#updateBadge{
+  background-color: gold;
+  margin-bottom: 5px; // hardcoded location adjustment
+}
 
 .spinner {
   position: absolute;
