@@ -470,7 +470,7 @@ const sketch = new p5(p => {
         if (!this.tools.isFetchActive()) return; // no need to update
         this.bb.clear(); // clear before updating
         if (data === null) return; // no online data
-        setTimeout(() => this.bb.json = data, 100); // wait before update
+        setTimeout(() => this.bb.json = data, 200); // wait before update
       });
     });
   };
