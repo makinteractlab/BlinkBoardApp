@@ -72,9 +72,11 @@ a,
   display: none;
 }
 
+/* badge position hardcoded */
 #adminBadge
 {
   position: absolute;
+  margin-left: 35px;
   color: gold;
 }
 
