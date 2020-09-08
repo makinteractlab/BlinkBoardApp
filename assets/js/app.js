@@ -48,8 +48,7 @@ $(document).ready(function () {
     initUI();
 
     // Input and Output controls
-    // --CHANGE
-    // initInOutControls();
+    initInOutControls();
 });
 
 
@@ -110,6 +109,11 @@ function signOut() {
 function updateUserData() {
     firebase.database().ref('users/' + theUser.uid).update(theUser.userData);
 }
+
+function updateAnalogInputData(data) {
+    firebase.database().ref(`users/${theUser.uid}/system/analogInput`).update(data);
+}
+
 
 function saveBreadboardData(breadboardData) {
     firebase.database().ref(`channels/${theUser.userData.channel}/breadboard`).update(breadboardData);

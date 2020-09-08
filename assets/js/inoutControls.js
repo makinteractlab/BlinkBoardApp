@@ -4,6 +4,7 @@ let inputChart; // global can be accessed in app.js
 
 
 class InputChart {
+    
     constructor(refreshRate) {
 
         this.rawData= []
@@ -12,8 +13,18 @@ class InputChart {
         this.rawData["A2"] = Array(10).fill(0);
 
         this.refreshRate = refreshRate; // every 10th of second
+        this.refreshRateDBupdate = 1000; // update db every second
 
         this.active= true;
+
+        // Keeep 
+        this.latest = {"A0": 0, "A1": 0, "A2": 0};
+        setInterval ( () => {
+            updateAnalogInputData (this.latest);
+        }, this.refreshRateDBupdate);
+
+
+        
 
         $('#aChart').click( () => {
             this.active= false;
@@ -161,6 +172,10 @@ class InputChart {
           });
 
         this.chart.update();
+
+        // also update the inner record
+        this.latest = {"A0": msg.A0, "A1": msg.A1, "A2": msg.A2};
+
         return true;
     }
 
