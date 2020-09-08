@@ -10,7 +10,7 @@ const breadboardParams = {
   led: {
     color: '#ff0000',
     overColor: '#ffff00ee',
-    size: 40,
+    size: 27,
     slowBlinkSpeed: 400,
     fastBlinkSpeed: 200,
     rowLength: 7
@@ -19,6 +19,11 @@ const breadboardParams = {
     x: 51,
     y: 50
   },
+  sideCoord: {
+    x: -200,
+    a0x: -145,
+    a0y: 450
+  }
 }
 
 const LedState = {
@@ -111,6 +116,7 @@ const sketch = new p5(p => {
       this.scale = 1;
       this.ready = false;
       this.leds = [];
+      this.params = params;
 
       this.onBlinkSlow = false;
       this.onBlinkFast = false;
@@ -122,7 +128,10 @@ const sketch = new p5(p => {
         this.scale = params.breadBoardSize / img.width;
         this.width = params.breadBoardSize;
         this.height = this.img.height * this.scale;
-        this.ready = true;
+
+        this.sideImg = p.loadImage("assets/images/side.svg", (img) => {
+          this.ready = true;
+        });
       });
 
       // create leds on rows
@@ -177,6 +186,44 @@ const sketch = new p5(p => {
         params.ledVccCoord.y + params.rowGap,
         true,
         params.led.rowLength * 2,
+        ledParams));
+
+      // side A0 - D2
+      this.leds.push(new BreadBoard.Led("a0",
+        this.params.sideCoord.a0x,
+        this.params.sideCoord.a0y,
+        true,
+        1,
+        ledParams));
+      this.leds.push(new BreadBoard.Led("a1",
+        this.params.sideCoord.a0x,
+        this.params.sideCoord.a0y + params.rowGap,
+        true,
+        1,
+        ledParams));
+      this.leds.push(new BreadBoard.Led("a2",
+        this.params.sideCoord.a0x,
+        this.params.sideCoord.a0y + params.rowGap * 2,
+        true,
+        1,
+        ledParams));
+      this.leds.push(new BreadBoard.Led("d0",
+        this.params.sideCoord.a0x,
+        this.params.sideCoord.a0y + params.rowGap * 3,
+        true,
+        1,
+        ledParams));
+      this.leds.push(new BreadBoard.Led("d1",
+        this.params.sideCoord.a0x,
+        this.params.sideCoord.a0y + params.rowGap * 4,
+        true,
+        1,
+        ledParams));
+      this.leds.push(new BreadBoard.Led("d2",
+        this.params.sideCoord.a0x,
+        this.params.sideCoord.a0y + params.rowGap * 5,
+        true,
+        1,
         ledParams));
     }
 
@@ -233,6 +280,10 @@ const sketch = new p5(p => {
 
       // Draw breadboard
       p.image(this.img, 0, 0);
+
+      // draw side
+      p.image(this.sideImg, this.params.sideCoord.x, this.img.height / 2 - this.sideImg.height / 2);
+
       p.pop();
     }
 
@@ -243,7 +294,7 @@ const sketch = new p5(p => {
       m.div(this.scale);
 
       // if outside 
-      if (m.x < 0 || m.x > this.img.width) return false;
+      // if (m.x < 0 || m.x > this.img.width) return false;
       if (m.y < 0 || m.y > this.img.height) return false;
 
       this.leds.forEach(led => led.mouseMoved(m));
@@ -257,7 +308,7 @@ const sketch = new p5(p => {
       m.div(this.scale);
 
       // if outside 
-      if (m.x < 0 || m.x > this.img.width) return false;
+      // if (m.x < 0 || m.x > this.img.width) return false;
       if (m.y < 0 || m.y > this.img.height) return false;
 
       // If clicked callabck
@@ -329,7 +380,7 @@ const sketch = new p5(p => {
           writeJsonToPort(cmd);
           await Util.sleep(this.serialMsDelay);
         }
-      })();  // execute!
+      })(); // execute!
 
     }
   }
@@ -372,7 +423,7 @@ const sketch = new p5(p => {
     get fetchButton() {
       return $('#fetchTool');
     }
-    isFetchActive(){
+    isFetchActive() {
       return this.current === "fetchTool";
     }
 
@@ -406,7 +457,7 @@ const sketch = new p5(p => {
     this.tools = new ToolBar();
 
     this.tools.clearButton.click(() => this.bb.clear());
-    
+
     this.tools.saveButton.click(() => {
       if (this.bb.json !== null)
         saveBreadboardData(this.bb.json)
@@ -414,12 +465,12 @@ const sketch = new p5(p => {
 
 
     this.tools.fetchButton.click(() => {
-      
-      onBreadboardDataChange( (data) => {
-        this.bb.clear(); // clear before updating
-        if (data===null) return; // no online data
+
+      onBreadboardDataChange((data) => {
         if (!this.tools.isFetchActive()) return; // no need to update
-        setTimeout( () => this.bb.json= data, 100); // wait before update
+        this.bb.clear(); // clear before updating
+        if (data === null) return; // no online data
+        setTimeout(() => this.bb.json = data, 100); // wait before update
       });
     });
   };
