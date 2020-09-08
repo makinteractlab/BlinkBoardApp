@@ -34,6 +34,8 @@ const LedState = {
 }
 
 
+
+
 const sketch = new p5(p => {
 
   class BreadBoard {
@@ -121,7 +123,7 @@ const sketch = new p5(p => {
       this.onBlinkSlow = false;
       this.onBlinkFast = false;
 
-      this.serialMsDelay = 10; // tiny delay needed for making serial work
+      this.serialMsDelay = Constants.serial_delay; // tiny delay needed for making serial work
 
 
       this.img = p.loadImage("assets/images/breadboard.svg", (img) => {
@@ -470,7 +472,7 @@ const sketch = new p5(p => {
         if (!this.tools.isFetchActive()) return; // no need to update
         this.bb.clear(); // clear before updating
         if (data === null) return; // no online data
-        setTimeout(() => this.bb.json = data, 100); // wait before update
+        setTimeout(() => this.bb.json = data, Constants.upload_delay); // wait before update
       });
     });
   };

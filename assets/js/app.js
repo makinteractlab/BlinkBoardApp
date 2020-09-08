@@ -2,6 +2,7 @@ const $ = require('jquery');
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
 const Util = require('./assets/js/util');
+const Constants = require('./assets/js/constants');
 
 
 

@@ -1,5 +1,6 @@
 const $ = require('jquery');
 const Util = require('./assets/js/util');
+const Constants = require('./assets/js/constants');
 const firebase = Util.getFirebase();
 
 
@@ -55,7 +56,7 @@ firebase.auth().onAuthStateChanged(function (user) {
                     name: user.uid,
                     email: user.email,
                     avatar: "https://gravatar.com/avatar/" + Util.md5(user.email),
-                    channel: "ID220",
+                    channel: Constants.default_channel,
                     settings: {
                         port: "",
                         lightBg: 20,
