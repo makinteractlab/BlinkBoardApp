@@ -304,8 +304,8 @@ function initSerial() {
 
     // On selecting a port
     let events = 'change';
-    if (os === 'Linux' || os === 'Windows') {
-        events = 'change blur'
+    if (os === 'Linux') {
+        events = 'change blur';
     }
 
     $("#portList").on(events, function () {
