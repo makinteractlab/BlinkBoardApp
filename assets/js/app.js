@@ -49,7 +49,7 @@ $(document).ready(function () {
     initUI();
 
     // Input and Output controls
-    initInOutControls();
+    // initInOutControls();
 });
 
 
@@ -179,10 +179,11 @@ function initUI() {
     Util.getLatestAppReleaseInfo().then( (result) => {
         // Util.log (`Current ${Util.getCurrentAppVersion()}`)
         // Util.log (`Latest ${result.data.tag_name}`);
-        
         if (Util.isDebugMode()) return;
 
-        if (Util.getCurrentAppVersion() == result.data.tag_name) return;
+        const currentVersion = Util.versionToNumber(Util.getCurrentAppVersion());
+
+        if (currentVersion >= Util.versionToNumber(result.data.tag_name)) return;
         // show link
         $('#updateLink').removeAttr('hidden');
         // update link to correct zip file
@@ -195,7 +196,6 @@ function initUI() {
         // replace link if found a suitable one
         $('#updateLink').attr('href', link);
     });
-
 }
 
 

@@ -52,6 +52,11 @@ module.exports = {
         return pjson.version;
     },
 
+    versionToNumber: function (v){
+        // following the format X.X.X
+        return parseInt(v.split('.').join(""))
+    },
+
     md5: function (string) {
         return crypto.createHash('md5').update(string).digest('hex');
     },
