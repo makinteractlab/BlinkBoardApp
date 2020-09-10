@@ -1,9 +1,9 @@
 {
   "name": "BlinkBoardApp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Using your breadboard for online coursework",
   "main": "main.js",
-  "debug": true,
+  "debug": false,
   "scripts": {
     "install": "electron-rebuild",
     "start": "electron-forge start",
