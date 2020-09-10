@@ -5,23 +5,11 @@ const Util = require('./assets/js/util');
 const Constants = require('./assets/js/constants');
 
 
-
-
-const {
-    lstat
-} = require('fs');
-const {
-    timeStamp
-} = require('console');
-const { isatty } = require('tty');
-
-
 // Globals
 let port;
 let connection;
 const firebase = Util.getFirebase();
 const theUser = {}
-const os = getOS();
 
 
 
@@ -72,6 +60,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         }).then(()=>{
             updateUserData(); 
             updateUI();
+            setupWithStoredData();
         });
     });
 });
@@ -209,6 +198,13 @@ function updateUI() {
     const avatarImg = theUser.userData.avatar + '?s=200'; // size 200
     $('.avatar').attr("src", avatarImg)
 
+    // Show screen by hiding splash
+    $('#splashScreen').hide();
+}
+
+
+function setupWithStoredData(){
+
     // Settings from recorded values
     $('#brightnessRange').val(theUser.userData.settings.lightBg);
 
@@ -225,10 +221,8 @@ function updateUI() {
     // Connect to serial port
     const lastPort = theUser.userData.settings.port
     setupSerialPort(lastPort)
-
-    // Show screen by hiding splash
-    $('#splashScreen').hide();
 }
+
 
 
 
@@ -304,14 +298,20 @@ function initSerial() {
 
     // On selecting a port
     let events = 'change';
-    if (os === 'Linux') {
+    if (getOS() === 'Linux') {
         events = 'change blur';
     }
 
-    $("#portList").on(events, function () {
+    // $("#portList").on(events, function () {
+    //     const portName = $("#portList option:selected").text();
+    //     setupSerialPort(portName);
+    // });
+
+    $('#connectButton').on('click', function () {
         const portName = $("#portList option:selected").text();
         setupSerialPort(portName);
     });
+
 
     // on clicking (reset and list options)
     $("#portList").on('click', function () {
@@ -449,9 +449,13 @@ function showSketch(visible) {
     if (visible) {
         $('#mainSketch').show();
         $('#backgroundImage').hide();
+        // show controling toolbar
+        $('#toolbar').removeAttr('hidden');
     } else {
         $('#mainSketch').hide();
         $('#backgroundImage').show();
+        // hide controling toolbar
+        $('#toolbar').attr('hidden', true);
     }
 }
 

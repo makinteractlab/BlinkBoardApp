@@ -67,9 +67,16 @@
             </li>
             <li class="uk-margin-small">
               <span>USB port</span>
-              <select id="portList" class="uk-select">
-                <option disabled selected value> -- Select the USB connection -- </option>
-              </select>
+
+              <div class="uk-flex-inline">
+                <select id="portList" class="uk-select">
+                  <option disabled selected value> -- Select the USB connection -- </option>
+                </select>
+
+                <a id="connectButton" class="uk-width-1-6@s uk-margin-left">
+                  <span uk-icon="link"></span>
+                </a>
+              </div>
             </li>
           </ul>
         </li>
@@ -121,7 +128,7 @@
 
       <!-- Toolbar -->
       <nav class="menuBar uk-navbar uk-position-top">
-        <div id="toolbar" class="uk-navbar-center uk-width-auto uk-light uk-background-primary">
+        <div id="toolbar" class="uk-navbar-center uk-width-auto uk-light uk-background-primary" hidden>
 
           <a id="offTool" class="uk-navbar-toggle toggleTool">
             <span>Off</span>
