@@ -309,12 +309,12 @@ function initSerial() {
 
     $('#connectButton').on('click', function () {
         const portName = $("#portList option:selected").text();
+        console.log(portName)
         setupSerialPort(portName);
     });
 
-
     // on clicking (reset and list options)
-    $("#portList").on('click', function () {
+    $("#portList").on('focus', function () {
 
         // Reupdate the list on click
         SerialPort.list((err, ports) => {
